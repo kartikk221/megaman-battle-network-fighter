@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 public class MegamanFighter extends Application {
     // Private variables
     final StackPane root = new StackPane();
+    Scene scene;
     Background background;
     BattleGround battleGround;
 
@@ -38,14 +39,22 @@ public class MegamanFighter extends Application {
             height = newHeight;
         }
 
+        // Mount the root to the stage
+        scene = new Scene(root, width, height);
+        stage.setScene(scene);
+
         // Instantiate the background
         background = new Background(root, "./assets/background.png", width, height);
 
         // Instantiate the battle ground
         battleGround = new BattleGround(root, "./assets/stage.png", width, height);
 
-        // Mount the root to the stage
-        stage.setScene(new Scene(root, width, height));
+        // Calculate a square size for the player that scales to the screen
+        double squareSize = width / 4;
+
+        // Instantiate the megaman player
+        MegamanPlayer megaman = new MegamanPlayer(scene);
+        megaman.mount(root, squareSize, squareSize, -width / 2);
 
         // Disable resizing
         stage.setResizable(false);
