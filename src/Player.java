@@ -3,7 +3,7 @@ package src;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
-public abstract class Player extends GameObject {
+public class Player extends GameObject {
     ImageView view;
     SpriteManager sprites;
     PositionManager position;
@@ -31,7 +31,7 @@ public abstract class Player extends GameObject {
         view.setFitHeight(height);
 
         // Update local position to 1,1 (middle)
-        updatePosition(1, 1);
+        updatePosition(1, 1, false);
 
         // Mount the view to the root
         root.getChildren().add(view);
@@ -46,18 +46,30 @@ public abstract class Player extends GameObject {
         }
     }
 
+    // Private booleans
+    int moveFrame = 0;
+    boolean isMoving = false;
+
     // Sets the players slot based position
-    void updatePosition(int x, int y) {
+    void updatePosition(int x, int y, boolean animate) {
         // Set the position
         position.setPosition(x, y);
-
-        // Sync the view position with the position manager
-        view.setTranslateX(position.getTranslationX());
-        view.setTranslateY(position.getTranslationY());
+        if (animate) {
+            // Mark the player as moving
+            moveFrame = 0;
+            isMoving = true;
+        } else {
+            // Sync the view position with the position manager
+            view.setTranslateX(position.getTranslationX());
+            view.setTranslateY(position.getTranslationY());
+        }
     }
 
     // Moves the player based on the slot index change values
     public void move(int x, int y) {
+        // Don't move if the player is already moving
+        if (isMoving) return;
+
         // Retrieve current position
         int[] position = this.position.getPosition();
 
@@ -67,7 +79,36 @@ public abstract class Player extends GameObject {
 
         // Update the position if there is a change
         if (x != position[0] || y != position[1]) {
-            updatePosition(x, y);
+            updatePosition(x, y, true);
+        }
+    }
+
+    public void Start() {}
+
+    public void Update() {
+        // Check if the player is moving
+        if (isMoving) {
+            // Check if the move frame is at the end
+            if (moveFrame >= 8) {
+                // Reset the move frame
+                moveFrame = 0;
+
+                // Mark the player as not moving
+                isMoving = false;
+            } else {
+                // Sync position on the 4th frame
+                if (moveFrame == 4) {
+                    // Sync the view position with the position manager
+                    view.setTranslateX(position.getTranslationX());
+                    view.setTranslateY(position.getTranslationY());
+                }
+
+                // Set the view image to the next move frame
+                view.setImage(sprites.getImage("move", moveFrame));
+
+                // Increment the move frame
+                moveFrame++;
+            }
         }
     }
 }

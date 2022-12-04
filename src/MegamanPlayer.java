@@ -31,8 +31,4 @@ public class MegamanPlayer extends Player {
             if (code == KeyCode.D || code == KeyCode.RIGHT) move(-1, 0);
         });
     }
-
-    public void Start() {}
-
-    public void Update() {}
 }
