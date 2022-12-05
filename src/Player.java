@@ -67,8 +67,8 @@ public class Player extends GameObject {
 
     // Moves the player based on the slot index change values
     public void move(int x, int y) {
-        // Don't move if the player is already moving
-        if (isMoving) return;
+        // Don't move if the player is already moving or firing
+        if (isMoving || isFiring) return;
 
         // Retrieve current position
         int[] position = this.position.getPosition();
@@ -83,6 +83,28 @@ public class Player extends GameObject {
         }
     }
 
+    int fireFrame = 0;
+    boolean isFiring = false;
+
+    // Fires the buster
+    public void setFiring(boolean firing) {
+        // Don't fire if the player is already firing or moving
+        if (isMoving || isFiring == firing) return;
+
+        // Update the firing state
+        boolean wasFiring = isFiring;
+        isFiring = firing;
+
+        // Determine if the player is firing or not
+        if (wasFiring) {
+            // Reset the fire frame and set active sprite to move 0
+            view.setImage(sprites.getImage("move", 0));
+        } else {
+            // Reset the fire frame and set active sprite to shoot 0
+            fireFrame = 0;
+        }
+    }
+
     public void Start() {}
 
     public void Update() {
@@ -90,24 +112,34 @@ public class Player extends GameObject {
         if (isMoving) {
             // Check if the move frame is at the end
             if (moveFrame >= 8) {
-                // Reset the move frame
+                // Reset the move frame and mark the player as not moving
                 moveFrame = 0;
-
-                // Mark the player as not moving
                 isMoving = false;
             } else {
-                // Sync position on the 4th frame
+                // Sync the player position on the 4th frame
                 if (moveFrame == 4) {
-                    // Sync the view position with the position manager
                     view.setTranslateX(position.getTranslationX());
                     view.setTranslateY(position.getTranslationY());
                 }
 
-                // Set the view image to the next move frame
+                // Set the view image to the next move frame and increment the move frame
                 view.setImage(sprites.getImage("move", moveFrame));
-
-                // Increment the move frame
                 moveFrame++;
+            }
+        }
+
+        // Check if the player is firing
+        if (isFiring) {
+            // Check if the fire frame is at the end
+            if (fireFrame >= 12 * 3) {
+                // Loop back to 8th frame
+                fireFrame = 8 * 3;
+            } else {
+                // Increment the fire frame and update every 3 frames
+                if (fireFrame % 3 == 0) {
+                    view.setImage(sprites.getImage("shoot", fireFrame / 3));
+                }
+                fireFrame++;
             }
         }
     }

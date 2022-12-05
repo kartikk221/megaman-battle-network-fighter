@@ -2,7 +2,6 @@ import src.*;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -13,6 +12,7 @@ public class MegamanFighter extends Application {
     Scene scene;
     Background background;
     BattleGround battleGround;
+    AudioManager audioManager;
 
     public static void main(String[] args) {
         launch(args);
@@ -43,6 +43,10 @@ public class MegamanFighter extends Application {
         scene = new Scene(root, width, height);
         stage.setScene(scene);
 
+        // Load the background music track
+        audioManager = new AudioManager();
+        audioManager.load("background", "./assets/sound/background.wav");
+
         // Instantiate the background
         background = new Background(root, "./assets/background.png", width, height);
 
@@ -56,10 +60,19 @@ public class MegamanFighter extends Application {
         MegamanPlayer megaman = new MegamanPlayer(scene);
         megaman.mount(root, squareSize, squareSize, -width / 2);
 
+        // Instantiate the enemy player
+        EnemyPlayer enemy = new EnemyPlayer(scene);
+        enemy.setDirection(true);
+        enemy.mount(root, squareSize, squareSize, 0);
+
         // Disable resizing
         stage.setResizable(false);
 
         // Show the stage
         stage.show();
+
+        // Play the background music
+        audioManager.setVolume("background", 0.1);
+        audioManager.play("background", true);
     }
 }
