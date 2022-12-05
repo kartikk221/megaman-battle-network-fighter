@@ -12,7 +12,7 @@ public class MegamanFighter extends Application implements Thread.UncaughtExcept
     Scene scene;
     Background background;
     BattleGround battleGround;
-    AudioManager audioManager;
+    public static AudioManager sharedAudio = new AudioManager();
 
     public static void main(String[] args) {
         launch(args);
@@ -22,9 +22,8 @@ public class MegamanFighter extends Application implements Thread.UncaughtExcept
         // Set the title of the stage
         stage.setTitle("Megaman Fighter Game");
 
-        // Load audio tracks into memory
-        audioManager = new AudioManager();
-        audioManager.load("background", "./assets/sound/background.wav");
+        // Load shared audio tracks into memory
+        sharedAudio.load("background", "./assets/sound/background.wav");
 
         // Retrieve the device width and height
         Rectangle2D screen = Screen.getPrimary().getBounds();
@@ -59,7 +58,7 @@ public class MegamanFighter extends Application implements Thread.UncaughtExcept
         megaman.mount(root, player_size, player_size, -width / 2);
 
         // Instantiate the enemy player
-        EnemyPlayer enemy = new EnemyPlayer(scene);
+        EnemyPlayer enemy = new EnemyPlayer();
         enemy.mount(root, player_size, player_size, 0);
         enemy.setDirection(true);
 
@@ -68,8 +67,8 @@ public class MegamanFighter extends Application implements Thread.UncaughtExcept
         stage.show();
 
         // Play the background music
-        audioManager.setVolume("background", 0.1);
-        audioManager.play("background", true);
+        sharedAudio.setVolume("background", 0.1);
+        sharedAudio.play("background", true);
     }
 
     public void uncaughtException(Thread t, Throwable e) {

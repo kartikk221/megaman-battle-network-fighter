@@ -4,33 +4,28 @@ import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 
 public class Buster extends GameObject {
-    Player owner;
     ImageView view;
-    SpriteManager sprites;
+    SpriteManager sprites = new SpriteManager();
+    AudioManager audio = new AudioManager();
 
-    public Buster(Player owner) {
+    public Buster() {
         // Run at 20 frames per second
         super(20);
 
-        // Set the owner
-        this.owner = owner;
+        // Load the audio
+        audio.load("fire", "./assets/sound/buster-fire.wav");
+        audio.setVolume("fire", 0.1);
 
-        // Instantiate the sprite manager
-        sprites = new SpriteManager();
-
-        // Load weapon sprites into memory
+        // Load the sprites
         sprites.load("shoot", "./assets/player/buster/buster_", ".png", 0, 3);
     
         // Instantiate the view with the first shoot frame
         view = new ImageView(sprites.getImage("shoot", 0));
-
-        // Hide the view by default
         view.setVisible(false);
     }
 
     // Sets the weapon position
     public void setTranslatePosition(double x, double y) {
-        // Set the view position
         view.setTranslateX(x);
         view.setTranslateY(y);
     }
@@ -48,26 +43,25 @@ public class Buster extends GameObject {
     boolean isVisible = false;
     public void setVisible(boolean visible) {
         // Ensure the visibility state has changed
-        if (isVisible == visible) return;
-
-        // Set the view visibility
-        isVisible = visible;
-        view.setVisible(visible);
+        if (isVisible != visible) {
+            isVisible = visible;
+            view.setVisible(visible);
+        }
     }
 
     int frame = 0;
     public void Update() {
-        // Check if the weapon is visible
-        if (isVisible) {
-            // Check if we reached the last frame
-            if (frame >= 4) {
-                // Loop back to the 0th frame
-                frame = 0;
-            } else {
-                // Increment and display the next frame
-                view.setImage(sprites.getImage("shoot", frame));
-                frame++;
-            }
+        // Do not update if the weapon is not visible
+        if (!isVisible) return;
+
+        // Determine if end of animation is reached
+        if (frame >= 4) {
+            // Reset the frame and play the fire sound
+            frame = 0;
+            audio.play("fire", false);
+        } else {
+            view.setImage(sprites.getImage("shoot", frame));
+            frame++;
         }
     }
 }

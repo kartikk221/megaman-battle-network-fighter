@@ -65,13 +65,13 @@ public class MegamanPlayer extends Player {
         // Call super update
         super.Update();
 
-        // Check if the player is trying to shoot
+        // Move the player based on the key presses
         if (upPressed) move(0, 1);
         if (leftPressed) move(1, 0);
         if (downPressed) move(0, -1);
         if (rightPressed) move(-1, 0);
 
-        // Check if the player is trying to shoot
+        // Update the firing state
         setFiring(shootPressed);
     }
 }

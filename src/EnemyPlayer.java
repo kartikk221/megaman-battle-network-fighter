@@ -1,16 +1,9 @@
 package src;
 
-import javafx.scene.Scene;
-
 public class EnemyPlayer extends Player {
-    Scene scene;
-
-    public EnemyPlayer(Scene scene) {
+    public EnemyPlayer() {
         // Call the super constructor with the path to the megaman sprites
         super("./assets/player");
-
-        // Set the scene
-        this.scene = scene;
 
         // Randomly move the player between 0.1 - 1.5 seconds
         new Thread(() -> {

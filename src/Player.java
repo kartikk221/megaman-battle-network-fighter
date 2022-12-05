@@ -7,18 +7,12 @@ import javafx.scene.layout.StackPane;
 public class Player extends GameObject {
     Group group;
     ImageView view;
-    SpriteManager sprites;
     PositionManager position;
-    AudioManager audio;
-    Buster buster;
+    SpriteManager sprites = new SpriteManager();
+    Buster buster = new Buster();
 
     public Player(String path) {
-        // Load audio files into memory
-        audio = new AudioManager();
-        audio.load("buster-fire", "./assets/sound/buster-fire.wav");
-
         // Instantiate the sprite manager and load the player sprites
-        sprites = new SpriteManager();
         sprites.load("move", path + "/move/move_", ".png", 0, 7);
         sprites.load("damaged", path + "/damaged/damaged_", ".png", 0, 7);
         sprites.load("shoot", path + "/shoot/shoot_", ".png", 0, 11);
@@ -28,9 +22,6 @@ public class Player extends GameObject {
         
         // Instantiate the group
         group = new Group(view);
-
-        // Instantiate the buster weapon
-        buster = new Buster(this);
     }
 
     public PositionManager getPositionManager() {
@@ -123,15 +114,12 @@ public class Player extends GameObject {
 
             // Reset the fire frame and set active sprite to move 0
             view.setImage(sprites.getImage("move", 0));
-            audio.stop("buster-fire");
         } else {
             // Mark the player as firing
             isFiring = true;
 
             // Reset the fire frame and set active sprite to shoot 0
             fireFrame = 0;
-            audio.setVolume("buster-fire", 0.1);
-            audio.play("buster-fire", true);
         }
     }
 

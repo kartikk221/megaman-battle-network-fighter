@@ -36,6 +36,9 @@ public class AudioManager {
         // Set the player to loop
         player.setCycleCount(loop ? MediaPlayer.INDEFINITE : 1);
 
+        // Reset the player and play
+        if (!loop) player.seek(player.getStartTime());
+
         // Play the player
         player.play();
     }
