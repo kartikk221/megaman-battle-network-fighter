@@ -20,9 +20,6 @@ public abstract class GameObject {
 
     // Initializes the game object
     void initialize() {
-        // Call Start() to initialize the game object
-        Start();
-
         // Create a timer to call Update() every frame
         timer = new Timer(1000 / frame_rate, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -42,9 +39,6 @@ public abstract class GameObject {
     public Timer getTimer() {
         return timer;
     }
-
-    // Called once when the game object is created
-    public abstract void Start();
 
     // Called every frame
     public abstract void Update();

@@ -135,8 +135,6 @@ public class Player extends GameObject {
         }
     }
 
-    public void Start() {}
-
     public void Update() {
         // Check if the player is moving
         if (isMoving) {

@@ -55,19 +55,6 @@ public class Buster extends GameObject {
         view.setVisible(visible);
     }
 
-    boolean isLeft = false;
-
-    // Sets the weapon horizontal direction
-    public void setDirection(boolean left) {
-        if (left) {
-            view.setScaleX(-1);
-        } else {
-            view.setScaleX(1);
-        }
-    }
-
-    public void Start() {}
-
     int frame = 0;
     public void Update() {
         // Check if the weapon is visible

@@ -63,8 +63,6 @@ public class Background extends GameObject {
         return views;
     }
 
-    public void Start() {}
-
     public void Update() {
         // Ensure views are not null
         if (views == null) return;
