@@ -6,7 +6,10 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
  
-public class MegamanFighter extends Application implements Thread.UncaughtExceptionHandler {
+public class GameManager extends Application implements Thread.UncaughtExceptionHandler {
+    // Singleton instance
+    public static GameManager Instance;
+
     // Private variables
     final StackPane root = new StackPane();
     Scene scene;
@@ -19,6 +22,13 @@ public class MegamanFighter extends Application implements Thread.UncaughtExcept
     }
     
     public void start(Stage stage) {
+        // Set the singleton instance
+        Instance = this;
+        if (Instance != this) {
+            System.out.println("GameManager is a singleton class. Only one instance can exist at a time.");
+            System.exit(1);
+        }
+
         // Set the title of the stage
         stage.setTitle("Megaman Fighter Game");
 
