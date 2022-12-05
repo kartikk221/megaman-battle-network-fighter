@@ -7,6 +7,8 @@ public class Player extends GameObject {
     ImageView view;
     SpriteManager sprites;
     PositionManager position;
+    AudioManager audio;
+    Buster buster;
 
     public Player(String path) {
         // Instantiate the sprite manager
@@ -17,8 +19,19 @@ public class Player extends GameObject {
         sprites.load("damaged", path + "/damaged/damaged_", ".png", 0, 7);
         sprites.load("shoot", path + "/shoot/shoot_", ".png", 0, 11);
 
+        // Load audio files into memory
+        audio = new AudioManager();
+        audio.load("buster-fire", "./assets/sound/buster-fire.wav");
+
         // Instantiate the view with the first move frame
         view = new ImageView(sprites.getImage("move", 0));
+
+        // Instantiate the buster weapon
+        buster = new Buster(this);
+    }
+
+    public PositionManager getPositionManager() {
+        return position;
     }
 
     // Mounts the player view to the given root
@@ -35,6 +48,9 @@ public class Player extends GameObject {
 
         // Mount the view to the root
         root.getChildren().add(view);
+
+        // Mount the buster weapon to the root
+        buster.mount(root, width * 0.7, height * 0.7, -height * 0.06, -height * 0.025);
     }
 
     // Sets the player horizontal direction
@@ -44,6 +60,9 @@ public class Player extends GameObject {
         } else {
             view.setScaleX(1);
         }
+
+        // Set the direction of the buster weapon
+        buster.setDirection(left);
     }
 
     // Private booleans
@@ -90,18 +109,26 @@ public class Player extends GameObject {
     public void setFiring(boolean firing) {
         // Don't fire if the player is already firing or moving
         if (isMoving || isFiring == firing) return;
-
-        // Update the firing state
-        boolean wasFiring = isFiring;
-        isFiring = firing;
-
+        
         // Determine if the player is firing or not
-        if (wasFiring) {
+        if (isFiring) {
+            // Mark the player as not firing
+            isFiring = false;
+
+            // Hide the buster
+            buster.setVisible(false);
+
             // Reset the fire frame and set active sprite to move 0
             view.setImage(sprites.getImage("move", 0));
+            audio.stop("buster-fire");
         } else {
+            // Mark the player as firing
+            isFiring = true;
+
             // Reset the fire frame and set active sprite to shoot 0
             fireFrame = 0;
+            audio.setVolume("buster-fire", 0.1);
+            audio.play("buster-fire", true);
         }
     }
 
@@ -112,8 +139,7 @@ public class Player extends GameObject {
         if (isMoving) {
             // Check if the move frame is at the end
             if (moveFrame >= 8) {
-                // Reset the move frame and mark the player as not moving
-                moveFrame = 0;
+                // Reset the moving flag
                 isMoving = false;
             } else {
                 // Sync the player position on the 4th frame
@@ -126,10 +152,7 @@ public class Player extends GameObject {
                 view.setImage(sprites.getImage("move", moveFrame));
                 moveFrame++;
             }
-        }
-
-        // Check if the player is firing
-        if (isFiring) {
+        } else if (isFiring) { // Check if the player is firing
             // Check if the fire frame is at the end
             if (fireFrame >= 12 * 3) {
                 // Loop back to 8th frame
@@ -137,6 +160,10 @@ public class Player extends GameObject {
             } else {
                 // Increment the fire frame and update every 3 frames
                 if (fireFrame % 3 == 0) {
+                    // Show the buster on the 3th frame
+                    if (fireFrame == 3 * 3) buster.setVisible(true);
+                    
+                    // Set the view image to the next shoot frame
                     view.setImage(sprites.getImage("shoot", fireFrame / 3));
                 }
                 fireFrame++;

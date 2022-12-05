@@ -1,9 +1,12 @@
 package src;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public abstract class GameObject {
+    Timer timer;
     int frame_rate = 60;
     
     public GameObject() {
@@ -21,17 +24,23 @@ public abstract class GameObject {
         Start();
 
         // Create a timer to call Update() every frame
-        long milliseconds = 1000 / frame_rate;
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                Update();
+        timer = new Timer(1000 / frame_rate, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+              SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    Update();
+                }
+              });
             }
-        };
+          });
 
-        // Schedule the task
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(task, 0, milliseconds);
+        // Start the timer
+        timer.start();
+    }
+
+    // Returns the timer for this instance
+    public Timer getTimer() {
+        return timer;
     }
 
     // Called once when the game object is created

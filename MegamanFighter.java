@@ -6,7 +6,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
  
-public class MegamanFighter extends Application {
+public class MegamanFighter extends Application implements Thread.UncaughtExceptionHandler {
     // Private variables
     final StackPane root = new StackPane();
     Scene scene;
@@ -74,5 +74,9 @@ public class MegamanFighter extends Application {
         // Play the background music
         audioManager.setVolume("background", 0.1);
         audioManager.play("background", true);
+    }
+
+    public void uncaughtException(Thread t, Throwable e) {
+        System.out.println("Uncaught exception: " + e);
     }
 }
