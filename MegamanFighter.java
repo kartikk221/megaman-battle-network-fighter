@@ -22,6 +22,10 @@ public class MegamanFighter extends Application implements Thread.UncaughtExcept
         // Set the title of the stage
         stage.setTitle("Megaman Fighter Game");
 
+        // Load audio tracks into memory
+        audioManager = new AudioManager();
+        audioManager.load("background", "./assets/sound/background.wav");
+
         // Retrieve the device width and height
         Rectangle2D screen = Screen.getPrimary().getBounds();
         double width = screen.getWidth();
@@ -43,32 +47,24 @@ public class MegamanFighter extends Application implements Thread.UncaughtExcept
         scene = new Scene(root, width, height);
         stage.setScene(scene);
 
-        // Load the background music track
-        audioManager = new AudioManager();
-        audioManager.load("background", "./assets/sound/background.wav");
-
         // Instantiate the background
         background = new Background(root, "./assets/background.png", width, height);
-
-        // Instantiate the battle ground
         battleGround = new BattleGround(root, "./assets/stage.png", width, height);
 
-        // Calculate a square size for the player that scales to the screen
-        double squareSize = width / 4;
+        // Calculate a relative size for the player
+        double player_size = width / 4;
 
         // Instantiate the megaman player
         MegamanPlayer megaman = new MegamanPlayer(scene);
-        megaman.mount(root, squareSize, squareSize, -width / 2);
+        megaman.mount(root, player_size, player_size, -width / 2);
 
         // Instantiate the enemy player
         EnemyPlayer enemy = new EnemyPlayer(scene);
+        enemy.mount(root, player_size, player_size, 0);
         enemy.setDirection(true);
-        enemy.mount(root, squareSize, squareSize, 0);
 
-        // Disable resizing
+        // Disable resizing and show the stage
         stage.setResizable(false);
-
-        // Show the stage
         stage.show();
 
         // Play the background music

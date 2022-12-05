@@ -1,9 +1,11 @@
 package src;
 
+import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
 public class Player extends GameObject {
+    Group group;
     ImageView view;
     SpriteManager sprites;
     PositionManager position;
@@ -11,20 +13,21 @@ public class Player extends GameObject {
     Buster buster;
 
     public Player(String path) {
-        // Instantiate the sprite manager
-        sprites = new SpriteManager();
-
-        // Load player sprites into memory
-        sprites.load("move", path + "/move/move_", ".png", 0, 7);
-        sprites.load("damaged", path + "/damaged/damaged_", ".png", 0, 7);
-        sprites.load("shoot", path + "/shoot/shoot_", ".png", 0, 11);
-
         // Load audio files into memory
         audio = new AudioManager();
         audio.load("buster-fire", "./assets/sound/buster-fire.wav");
 
+        // Instantiate the sprite manager and load the player sprites
+        sprites = new SpriteManager();
+        sprites.load("move", path + "/move/move_", ".png", 0, 7);
+        sprites.load("damaged", path + "/damaged/damaged_", ".png", 0, 7);
+        sprites.load("shoot", path + "/shoot/shoot_", ".png", 0, 11);
+
         // Instantiate the view with the first move frame
         view = new ImageView(sprites.getImage("move", 0));
+        
+        // Instantiate the group
+        group = new Group(view);
 
         // Instantiate the buster weapon
         buster = new Buster(this);
@@ -46,28 +49,29 @@ public class Player extends GameObject {
         // Update local position to 1,1 (middle)
         updatePosition(1, 1, false);
 
-        // Mount the view to the root
-        root.getChildren().add(view);
-
         // Mount the buster weapon to the root
-        buster.mount(root, width * 0.7, height * 0.7, -height * 0.06, -height * 0.025);
+        buster.setTranslatePosition(height * 0.05, height * 0.125);
+        buster.mount(group, width * 0.75, height * 0.75);
+
+        // Mount the view to the root
+        root.getChildren().add(group);
     }
 
     // Sets the player horizontal direction
     public void setDirection(boolean left) {
-        if (left) {
-            view.setScaleX(-1);
-        } else {
-            view.setScaleX(1);
-        }
-
-        // Set the direction of the buster weapon
-        buster.setDirection(left);
+        // Update the scaleX based on the direction
+        group.setScaleX(left ? -1 : 1);
     }
 
     // Private booleans
     int moveFrame = 0;
     boolean isMoving = false;
+
+    void renderPosition() {
+        // Sync the view position with the position manager
+        group.setTranslateX(position.getTranslationX());
+        group.setTranslateY(position.getTranslationY());
+    }
 
     // Sets the players slot based position
     void updatePosition(int x, int y, boolean animate) {
@@ -78,9 +82,8 @@ public class Player extends GameObject {
             moveFrame = 0;
             isMoving = true;
         } else {
-            // Sync the view position with the position manager
-            view.setTranslateX(position.getTranslationX());
-            view.setTranslateY(position.getTranslationY());
+            // Render the position instantly
+            renderPosition();
         }
     }
 
@@ -142,11 +145,8 @@ public class Player extends GameObject {
                 // Reset the moving flag
                 isMoving = false;
             } else {
-                // Sync the player position on the 4th frame
-                if (moveFrame == 4) {
-                    view.setTranslateX(position.getTranslationX());
-                    view.setTranslateY(position.getTranslationY());
-                }
+                // Render the position change on the 4th frame
+                if (moveFrame == 4) renderPosition();
 
                 // Set the view image to the next move frame and increment the move frame
                 view.setImage(sprites.getImage("move", moveFrame));
@@ -154,17 +154,17 @@ public class Player extends GameObject {
             }
         } else if (isFiring) { // Check if the player is firing
             // Check if the fire frame is at the end
-            if (fireFrame >= 12 * 3) {
+            if (fireFrame >= 12 * 4) {
                 // Loop back to 8th frame
-                fireFrame = 8 * 3;
+                fireFrame = 8 * 4;
             } else {
-                // Increment the fire frame and update every 3 frames
-                if (fireFrame % 3 == 0) {
+                // Increment the fire frame and update every 4 frames
+                if (fireFrame % 4 == 0) {
                     // Show the buster on the 3th frame
-                    if (fireFrame == 3 * 3) buster.setVisible(true);
+                    if (fireFrame == 3 * 4) buster.setVisible(true);
                     
                     // Set the view image to the next shoot frame
-                    view.setImage(sprites.getImage("shoot", fireFrame / 3));
+                    view.setImage(sprites.getImage("shoot", fireFrame / 4));
                 }
                 fireFrame++;
             }

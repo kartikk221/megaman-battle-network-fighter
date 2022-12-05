@@ -1,7 +1,7 @@
 package src;
 
+import javafx.scene.Group;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
 
 public class Buster extends GameObject {
     Player owner;
@@ -9,6 +9,9 @@ public class Buster extends GameObject {
     SpriteManager sprites;
 
     public Buster(Player owner) {
+        // Run at 20 frames per second
+        super(20);
+
         // Set the owner
         this.owner = owner;
 
@@ -25,15 +28,15 @@ public class Buster extends GameObject {
         view.setVisible(false);
     }
 
-    double offsetX;
-    double offsetY;
+    // Sets the weapon position
+    public void setTranslatePosition(double x, double y) {
+        // Set the view position
+        view.setTranslateX(x);
+        view.setTranslateY(y);
+    }
 
     // Mounts the Buster view to the given root
-    public void mount(StackPane root, double width, double height, double offsetX, double offsetY) {
-        // Store the offsets
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
-        
+    public void mount(Group root, double width, double height) {
         // Set the view width and height
         view.setFitWidth(width);
         view.setFitHeight(height);
@@ -44,15 +47,11 @@ public class Buster extends GameObject {
 
     boolean isVisible = false;
     public void setVisible(boolean visible) {
+        // Ensure the visibility state has changed
         if (isVisible == visible) return;
 
         // Set the view visibility
         isVisible = visible;
-
-        // Sync position if visible
-        if (isVisible) syncPosition();
-
-        // Update the view visibility
         view.setVisible(visible);
     }
 
@@ -60,7 +59,6 @@ public class Buster extends GameObject {
 
     // Sets the weapon horizontal direction
     public void setDirection(boolean left) {
-        isLeft = left;
         if (left) {
             view.setScaleX(-1);
         } else {
@@ -70,34 +68,17 @@ public class Buster extends GameObject {
 
     public void Start() {}
 
-    void syncPosition() {
-        // Track this view to the owner's position
-        PositionManager ownerPosition = owner.getPositionManager();
-        double ownerX = ownerPosition.getTranslationX();
-        double ownerY = ownerPosition.getTranslationY();
-
-        // Update the view position
-        view.setTranslateX(ownerX + offsetX * (isLeft ? -1 : 1));
-        view.setTranslateY(ownerY + offsetY);
-    }
-
     int frame = 0;
     public void Update() {
         // Check if the weapon is visible
         if (isVisible) {
-            // Sync the weapon position
-            syncPosition();
-
             // Check if we reached the last frame
-            if (frame >= 4 * 3) {
+            if (frame >= 4) {
                 // Loop back to the 0th frame
                 frame = 0;
             } else {
-                // Increment the frame every 3 frames
-                if (frame % 3 == 0) 
-                    view.setImage(sprites.getImage("shoot", frame / 3));
-
-                // Increment the frame
+                // Increment and display the next frame
+                view.setImage(sprites.getImage("shoot", frame));
                 frame++;
             }
         }
