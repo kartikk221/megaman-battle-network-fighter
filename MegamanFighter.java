@@ -71,6 +71,13 @@ public class MegamanFighter extends Application implements Thread.UncaughtExcept
         sharedAudio.play("background", true);
     }
 
+    @Override
+    public void stop() {
+        // Exit the application
+        System.out.println("Closing application...");
+        System.exit(0);
+    }
+
     public void uncaughtException(Thread t, Throwable e) {
         System.out.println("Uncaught exception: " + e);
     }
