@@ -4,42 +4,42 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public abstract class GameObject {
-    Timer timer;
-    int frame_rate = 60;
-    
-    public GameObject() {
-        initialize();
-    }
-
-    public GameObject(int frame_rate) {
-        this.frame_rate = frame_rate;
-        initialize();
-    }
+    static Timer timer;
+    final static int frame_rate = 60;
+    final static ArrayList<GameObject> objects = new ArrayList<GameObject>();
 
     // Initializes the game object
-    void initialize() {
+    static void beginTicking() {
+        // Only initialize once
+        if (timer != null) return;
+
         // Create a timer to call Update() every frame
         timer = new Timer(1000 / frame_rate, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-              SwingUtilities.invokeLater(new Runnable() {
+                SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    Update();
+                    // Update all game objects
+                    for (GameObject obj : objects) obj.Update();
                 }
-              });
+                });
             }
-          });
+            });
 
         // Start the timer
         timer.start();
     }
+    
+    public GameObject() {
+        // Add this object to the list of objects
+        objects.add(this);
 
-    // Returns the timer for this instance
-    public Timer getTimer() {
-        return timer;
+        // Begin ticking if this is the first object
+        if (objects.size() == 1) beginTicking();
     }
 
-    // Called every frame
+    // Called every frame must be overridden by child classes
     public abstract void Update();
 }

@@ -9,9 +9,6 @@ public class Buster extends GameObject {
     AudioManager audio = new AudioManager();
 
     public Buster() {
-        // Run at 20 frames per second
-        super(20);
-
         // Load the audio
         audio.load("fire", "./assets/sound/buster-fire.wav");
         audio.setVolume("fire", 0.1);
@@ -55,12 +52,13 @@ public class Buster extends GameObject {
         if (!isVisible) return;
 
         // Determine if end of animation is reached
-        if (frame >= 4) {
+        // Multiply and divide the frame by 3 to slow down the animation
+        if (frame >= 4 * 3) {
             // Reset the frame and play the fire sound
             frame = 0;
             audio.play("fire", false);
         } else {
-            view.setImage(sprites.getImage("shoot", frame));
+            if (frame % 3 == 0) view.setImage(sprites.getImage("shoot", frame / 3));
             frame++;
         }
     }
