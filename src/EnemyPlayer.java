@@ -3,7 +3,7 @@ package src;
 public class EnemyPlayer extends Player {
     public EnemyPlayer() {
         // Call the super constructor with the path to the megaman sprites
-        super("./assets/player");
+        super("./assets/enemy");
 
         // Randomly move the player between 0.1 - 1.5 seconds
         new Thread(() -> {

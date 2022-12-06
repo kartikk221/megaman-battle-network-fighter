@@ -8,13 +8,13 @@ public class Buster extends GameObject {
     SpriteManager sprites = new SpriteManager();
     AudioManager audio = new AudioManager();
 
-    public Buster() {
+    public Buster(String asset_path) {
         // Load the audio
         audio.load("fire", "./assets/sound/buster-fire.wav");
         audio.setVolume("fire", 0.1);
 
         // Load the sprites
-        sprites.load("shoot", "./assets/player/buster/buster_", ".png", 0, 3);
+        sprites.load("shoot", asset_path + "/buster/buster_", ".png", 0, 3);
     
         // Instantiate the view with the first shoot frame
         view = new ImageView(sprites.getImage("shoot", 0));

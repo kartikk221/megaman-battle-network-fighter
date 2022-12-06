@@ -11,10 +11,10 @@ public class GameManager extends Application implements Thread.UncaughtException
     public static GameManager Instance;
 
     // Private variables
-    final StackPane root = new StackPane();
     Scene scene;
     Background background;
     BattleGround battleGround;
+    final StackPane root = new StackPane();
     public static AudioManager sharedAudio = new AudioManager();
 
     public static void main(String[] args) {
@@ -79,6 +79,9 @@ public class GameManager extends Application implements Thread.UncaughtException
         // Play the background music
         sharedAudio.setVolume("background", 0.1);
         sharedAudio.play("background", true);
+
+        // Start the game loop
+        GameObject.beginTicking();
     }
 
     @Override

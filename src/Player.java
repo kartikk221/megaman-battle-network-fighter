@@ -9,13 +9,16 @@ public class Player extends GameObject {
     ImageView view;
     PositionManager position;
     SpriteManager sprites = new SpriteManager();
-    Buster buster = new Buster();
+    Buster buster;
 
     public Player(String path) {
         // Instantiate the sprite manager and load the player sprites
         sprites.load("move", path + "/move/move_", ".png", 0, 7);
         sprites.load("damaged", path + "/damaged/damaged_", ".png", 0, 7);
         sprites.load("shoot", path + "/shoot/shoot_", ".png", 0, 11);
+
+        // Instantiate the buster weapon
+        buster = new Buster(path);
 
         // Instantiate the view with the first move frame
         view = new ImageView(sprites.getImage("move", 0));

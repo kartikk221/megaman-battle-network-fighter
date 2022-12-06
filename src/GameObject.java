@@ -11,9 +11,9 @@ public abstract class GameObject {
     static Runnable ticker = null;
 
     // Initializes the game object
-    static void beginTicking() {
-        // Only initialize once
-        if (ticker != null) return;
+    public static boolean beginTicking() {
+        // Only initialize once and return false if already initialized
+        if (ticker != null) return false;
 
         // Define the ticker runnable
         ticker = new Runnable() {
@@ -32,14 +32,14 @@ public abstract class GameObject {
 
         // Schedule the ticker to run every 1000/frame_rate ms
         executor.scheduleAtFixedRate(ticker, 0, 1000 / frame_rate, java.util.concurrent.TimeUnit.MILLISECONDS);
+    
+        // Return true to indicate that the ticker was initialized
+        return true;
     }
     
     public GameObject() {
         // Add this object to the list of objects
         objects.add(this);
-
-        // Begin ticking if this is the first object
-        if (objects.size() == 1) beginTicking();
     }
 
     // Called every frame must be overridden by child classes
