@@ -88,6 +88,7 @@ public class GameManager extends Application implements Thread.UncaughtException
         System.exit(0);
     }
 
+    @Override
     public void uncaughtException(Thread t, Throwable e) {
         System.out.println("Uncaught exception: " + e);
     }

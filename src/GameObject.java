@@ -1,35 +1,37 @@
 package src;
 
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public abstract class GameObject {
-    static Timer timer;
     final static int frame_rate = 60;
     final static ArrayList<GameObject> objects = new ArrayList<GameObject>();
+    final static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    static Runnable ticker = null;
 
     // Initializes the game object
     static void beginTicking() {
         // Only initialize once
-        if (timer != null) return;
+        if (ticker != null) return;
 
-        // Create a timer to call Update() every frame
-        timer = new Timer(1000 / frame_rate, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    // Update all game objects
-                    for (GameObject obj : objects) obj.Update();
+        // Define the ticker runnable
+        ticker = new Runnable() {
+            public void run() {
+                // Update all game objects
+                for (GameObject object : objects) {
+                    try {
+                        object.Update();
+                    } catch (Exception e) {
+                        System.out.println("Update() failed for " + object.getClass().getName());
+                        System.out.println(e);
+                    }
                 }
-                });
             }
-            });
+        };
 
-        // Start the timer
-        timer.start();
+        // Schedule the ticker to run every 1000/frame_rate ms
+        executor.scheduleAtFixedRate(ticker, 0, 1000 / frame_rate, java.util.concurrent.TimeUnit.MILLISECONDS);
     }
     
     public GameObject() {
