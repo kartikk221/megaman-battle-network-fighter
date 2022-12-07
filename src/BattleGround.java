@@ -15,10 +15,8 @@ public class BattleGround {
             // Create an input stream to read the image
             FileInputStream stream = new FileInputStream(path);
 
-            // Instantiate the image
+            // Instantiate the image and view
             image = new Image(stream);
-
-            // Instantiate the view
             view = new ImageView(image);
 
             // Set the width and height of the view

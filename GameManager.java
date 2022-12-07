@@ -83,7 +83,7 @@ public class GameManager extends Application implements Thread.UncaughtException
 
             // Start the game loop
             GameObject.beginTicking();
-            System.out.println("Ticking " + GameObject.objects.size() + " objects every " + GameObject.frame_rate + " framers per second.");
+            System.out.println("Ticking " + GameObject.objects.size() + " objects every " + GameObject.frame_rate + " frames per second.");
         } catch (Exception e) {
             System.out.println("An error occurred while starting the game: ");
             System.out.println(e);

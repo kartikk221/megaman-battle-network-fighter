@@ -42,6 +42,6 @@ public abstract class GameObject {
         objects.add(this);
     }
 
-    // Called every frame must be overridden by child classes
+    // Called every frame must be overridden by all child classes
     public abstract void Update();
 }
