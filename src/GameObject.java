@@ -5,10 +5,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public abstract class GameObject {
-    final static int frame_rate = 60;
-    final static ArrayList<GameObject> objects = new ArrayList<GameObject>();
-    final static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-    static Runnable ticker = null;
+    static public Runnable ticker = null;
+    final public static int frame_rate = 60;
+    final public static ArrayList<GameObject> objects = new ArrayList<GameObject>();
+    final public static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     // Initializes the game object
     public static boolean beginTicking() {

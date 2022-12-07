@@ -6,10 +6,10 @@ import javafx.scene.layout.StackPane;
 
 public class Player extends GameObject {
     Group group;
+    Buster buster;
     ImageView view;
     PositionManager position;
     SpriteManager sprites = new SpriteManager();
-    Buster buster;
 
     public Player(String path) {
         // Instantiate the sprite manager and load the player sprites
@@ -40,12 +40,11 @@ public class Player extends GameObject {
         view.setFitWidth(width);
         view.setFitHeight(height);
 
-        // Update local position to 1,1 (middle)
+        // Update local player position to 1,1 (middle)
         updatePosition(1, 1, false);
 
         // Mount the buster weapon to the root
-        buster.setTranslatePosition(height * 0.05, height * 0.125);
-        buster.mount(group, width * 0.75, height * 0.75);
+        buster.mount(group, width * 0.75, height * 0.75, height * 0.05, height * 0.125);
 
         // Mount the view to the root
         root.getChildren().add(group);
@@ -58,11 +57,7 @@ public class Player extends GameObject {
     }
 
     // Private booleans
-    int moveFrame = 0;
-    boolean isMoving = false;
-
     void renderPosition() {
-        // Sync the view position with the position manager
         group.setTranslateX(position.getTranslationX());
         group.setTranslateY(position.getTranslationY());
     }
@@ -73,8 +68,8 @@ public class Player extends GameObject {
         position.setPosition(x, y);
         if (animate) {
             // Mark the player as moving
-            moveFrame = 0;
-            isMoving = true;
+            movingFrame = 0;
+            isPlayerMoving = true;
         } else {
             // Render the position instantly
             renderPosition();
@@ -82,80 +77,73 @@ public class Player extends GameObject {
     }
 
     // Moves the player based on the slot index change values
+    int movingFrame = 0;
+    boolean isPlayerMoving = false;
     public void move(int x, int y) {
         // Don't move if the player is already moving or firing
-        if (isMoving || isFiring) return;
+        if (isPlayerMoving || isFiringBuster) return;
 
-        // Retrieve current position
+        // Retrieve current position and constrain the new position
         int[] position = this.position.getPosition();
-
-        // Ensure the new position is within bounds of 0 - 2
         x = Math.max(0, Math.min(2, position[0] + x));
         y = Math.max(0, Math.min(2, position[1] + y));
 
         // Update the position if there is a change
-        if (x != position[0] || y != position[1]) {
-            updatePosition(x, y, true);
-        }
+        if (x != position[0] || y != position[1]) updatePosition(x, y, true);
     }
 
-    int fireFrame = 0;
-    boolean isFiring = false;
-
-    // Fires the buster
-    public void setFiring(boolean firing) {
-        // Don't fire if the player is already firing or moving
-        if (isMoving || isFiring == firing) return;
+    int busterFireFrame = 0;
+    boolean isFiringBuster = false;
+    public void setFiringBuster(boolean firing) {
+        // Reject if the player is already moving or firing
+        if (isPlayerMoving || isFiringBuster == firing) return;
         
         // Determine if the player is firing or not
-        if (isFiring) {
-            // Mark the player as not firing
-            isFiring = false;
-
-            // Hide the buster
+        if (isFiringBuster) {
+            // Mark the player as not firing, hide the buster and reset the player frame to neutral
+            isFiringBuster = false;
             buster.setVisible(false);
-
-            // Reset the fire frame and set active sprite to move 0
             view.setImage(sprites.getImage("move", 0));
         } else {
-            // Mark the player as firing
-            isFiring = true;
-
-            // Reset the fire frame and set active sprite to shoot 0
-            fireFrame = 0;
+            // Reset the fire frame and set firing flag
+            busterFireFrame = 0;
+            isFiringBuster = true;
         }
     }
 
     public void Update() {
         // Check if the player is moving
-        if (isMoving) {
+        if (isPlayerMoving) {
             // Check if the move frame is at the end
-            if (moveFrame >= 8) {
+            if (movingFrame >= 8) {
                 // Reset the moving flag
-                isMoving = false;
+                isPlayerMoving = false;
             } else {
                 // Render the position change on the 4th frame
-                if (moveFrame == 4) renderPosition();
+                if (movingFrame == 4) renderPosition();
 
                 // Set the view image to the next move frame and increment the move frame
-                view.setImage(sprites.getImage("move", moveFrame));
-                moveFrame++;
+                view.setImage(sprites.getImage("move", movingFrame));
+                movingFrame++;
             }
-        } else if (isFiring) { // Check if the player is firing
+        } else if (isFiringBuster) {
             // Check if the fire frame is at the end
-            if (fireFrame >= 12 * 4) {
+            if (busterFireFrame >= 12 * 4) {
                 // Loop back to 8th frame
-                fireFrame = 8 * 4;
+                busterFireFrame = 8 * 4;
             } else {
+                // Update the buster if it is visible
+                if (buster.isVisible()) buster.TickUpdate();
+
                 // Increment the fire frame and update every 4 frames
-                if (fireFrame % 4 == 0) {
+                if (busterFireFrame % 4 == 0) {
                     // Show the buster on the 3th frame
-                    if (fireFrame == 3 * 4) buster.setVisible(true);
+                    if (busterFireFrame == 3 * 4) buster.setVisible(true);
                     
                     // Set the view image to the next shoot frame
-                    view.setImage(sprites.getImage("shoot", fireFrame / 4));
+                    view.setImage(sprites.getImage("shoot", busterFireFrame / 4));
                 }
-                fireFrame++;
+                busterFireFrame++;
             }
         }
     }

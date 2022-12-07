@@ -72,6 +72,6 @@ public class MegamanPlayer extends Player {
         if (rightPressed) move(-1, 0);
 
         // Update the firing state
-        setFiring(shootPressed);
+        setFiringBuster(shootPressed);
     }
 }

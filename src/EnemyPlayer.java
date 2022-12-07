@@ -15,7 +15,7 @@ public class EnemyPlayer extends Player {
                 }
 
                 // Randomly fire
-                setFiring(Math.random() > 0.5);
+                setFiringBuster(Math.random() > 0.5);
                 
                 // Move randomly between -1 or 1 in both directions
                 boolean up = Math.random() > 0.5;

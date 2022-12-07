@@ -1,56 +1,39 @@
 package src;
 
-import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 
-public class Buster extends GameObject {
-    ImageView view;
-    SpriteManager sprites = new SpriteManager();
-    AudioManager audio = new AudioManager();
+public class Buster extends Weapon {
+    public Buster(String path) {
+        super(path);
+    }
 
-    public Buster(String asset_path) {
+    protected void loadAudio(String path) {
         // Load the audio
         audio.load("fire", "./assets/sound/buster-fire.wav");
         audio.setVolume("fire", 0.1);
+    }
 
+    protected void loadSprites(String path) {
         // Load the sprites
-        sprites.load("shoot", asset_path + "/buster/buster_", ".png", 0, 3);
-    
-        // Instantiate the view with the first shoot frame
-        view = new ImageView(sprites.getImage("shoot", 0));
+        sprites.load("shoot", path + "/buster/buster_", ".png", 0, 3);
+    }
+
+    protected void initialize(ImageView view, SpriteManager sprites, AudioManager audio) {
+        // Set the initial image and hide the view
+        view.setImage(sprites.getImage("shoot", 0));
         view.setVisible(false);
     }
 
-    // Sets the weapon position
-    public void setTranslatePosition(double x, double y) {
-        view.setTranslateX(x);
-        view.setTranslateY(y);
-    }
-
-    // Mounts the Buster view to the given root
-    public void mount(Group root, double width, double height) {
-        // Set the view width and height
-        view.setFitWidth(width);
-        view.setFitHeight(height);
-
-        // Mount the view to the root
-        root.getChildren().add(view);
-    }
-
-    boolean isVisible = false;
-    public void setVisible(boolean visible) {
-        // Ensure the visibility state has changed
-        if (isVisible != visible) {
-            isVisible = visible;
-            view.setVisible(visible);
+    protected int onVisiblilityChange(boolean visible, int frame) {
+        // Reset the frame on visibility hide
+        if (!visible) {
+            return 0;
+        } else {
+            return frame;
         }
     }
 
-    int frame = 0;
-    public void Update() {
-        // Do not update if the weapon is not visible
-        if (!isVisible) return;
-
+    protected int UpdateFrame(int frame, ImageView view, SpriteManager sprites, AudioManager audio) {
         // Determine if end of animation is reached
         // Multiply and divide the frame by 3 to slow down the animation
         if (frame >= 4 * 3) {
@@ -61,5 +44,8 @@ public class Buster extends GameObject {
             if (frame % 3 == 0) view.setImage(sprites.getImage("shoot", frame / 3));
             frame++;
         }
+
+        // Return the frame
+        return frame;
     }
 }
