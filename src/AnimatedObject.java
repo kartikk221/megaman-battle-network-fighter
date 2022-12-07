@@ -3,13 +3,13 @@ package src;
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 
-public abstract class Weapon {
+public abstract class AnimatedObject {
     int frame = 0;
     ImageView view = new ImageView();
     AudioManager audio = new AudioManager();
     SpriteManager sprites = new SpriteManager();
 
-    public Weapon(String path) {
+    public AnimatedObject(String path) {
         // Throw an error if the path is empty
         if (path.isEmpty()) throw new IllegalArgumentException("The path cannot be empty");
 

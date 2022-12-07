@@ -6,8 +6,9 @@ import javafx.scene.layout.StackPane;
 
 public class Player extends GameObject {
     Group group;
-    Buster buster;
     ImageView view;
+    Buster buster;
+    Flare busterFlare;
     PositionManager position;
     SpriteManager sprites = new SpriteManager();
 
@@ -19,11 +20,10 @@ public class Player extends GameObject {
 
         // Instantiate the buster weapon
         buster = new Buster(path);
+        busterFlare = new Flare("./assets/effects");
 
-        // Instantiate the view with the first move frame
+        // Instantiate the view and group
         view = new ImageView(sprites.getImage("move", 0));
-        
-        // Instantiate the group
         group = new Group(view);
     }
 
@@ -46,13 +46,15 @@ public class Player extends GameObject {
         // Mount the buster weapon to the root
         buster.mount(group, width * 0.75, height * 0.75, height * 0.05, height * 0.125);
 
+        // Mount the buster flare to the root
+        busterFlare.mount(group, width * 0.75, height * 0.75, height * 0.25, height * 0.015);
+
         // Mount the view to the root
         root.getChildren().add(group);
     }
 
     // Sets the player horizontal direction
     public void setDirection(boolean left) {
-        // Update the scaleX based on the direction
         group.setScaleX(left ? -1 : 1);
     }
 
@@ -64,7 +66,6 @@ public class Player extends GameObject {
 
     // Sets the players slot based position
     void updatePosition(int x, int y, boolean animate) {
-        // Set the position
         position.setPosition(x, y);
         if (animate) {
             // Mark the player as moving
@@ -103,6 +104,7 @@ public class Player extends GameObject {
             // Mark the player as not firing, hide the buster and reset the player frame to neutral
             isFiringBuster = false;
             buster.setVisible(false);
+            busterFlare.setVisible(false);
             view.setImage(sprites.getImage("move", 0));
         } else {
             // Reset the fire frame and set firing flag
@@ -128,21 +130,28 @@ public class Player extends GameObject {
             }
         } else if (isFiringBuster) {
             // Check if the fire frame is at the end
-            if (busterFireFrame >= 12 * 4) {
+            int throttle = 4;
+            if (busterFireFrame >= 12 * throttle) {
                 // Loop back to 8th frame
-                busterFireFrame = 8 * 4;
+                busterFireFrame = 8 * throttle;
             } else {
-                // Update the buster if it is visible
-                if (buster.isVisible()) buster.TickUpdate();
-
                 // Increment the fire frame and update every 4 frames
-                if (busterFireFrame % 4 == 0) {
-                    // Show the buster on the 3th frame
-                    if (busterFireFrame == 3 * 4) buster.setVisible(true);
+                if (busterFireFrame % throttle == 0) {
+                    // Show the buster and flare on the 3rd frame
+                    if (busterFireFrame == 3 * throttle) {
+                        buster.setVisible(true);
+                        busterFlare.setVisible(true);
+                    }
                     
                     // Set the view image to the next shoot frame
-                    view.setImage(sprites.getImage("shoot", busterFireFrame / 4));
+                    view.setImage(sprites.getImage("shoot", busterFireFrame / throttle));
                 }
+
+                // Tick the buster and flare
+                if (buster.isVisible()) buster.TickUpdate();
+                if (busterFlare.isVisible()) busterFlare.TickUpdate();
+
+                // Increment the fire frame
                 busterFireFrame++;
             }
         }

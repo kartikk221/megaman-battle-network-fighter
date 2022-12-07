@@ -1,17 +1,18 @@
 package src;
 
 import java.io.FileInputStream;
+
+import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
 public class Background extends GameObject {
-    double speed = 0.5;
+    double speed = 2;
     double width;
     double height;
     Image image;
-    double[] offsets;
-    ImageView[] views;
+    Group group;
 
     public Background(StackPane root, String path, double width, double height) {
         // Set the width and height
@@ -27,14 +28,10 @@ public class Background extends GameObject {
             image = new Image(stream);
 
             // Instantiate 3 images to create a 3x3 grid
-            views = new ImageView[2];
-            offsets = new double[2];
+            ImageView[] views = new ImageView[2];
             for (int i = 0; i < 2; i++) {
                 // Instantiate the view
                 views[i] = new ImageView(image);
-
-                // Store the offset as 0 which will be used to perform animations later
-                offsets[i] = 0;
 
                 // Set the width and height of the view
                 views[i].setFitWidth(width);
@@ -46,10 +43,13 @@ public class Background extends GameObject {
                 } else {
                     views[i].setTranslateY(0);
                 }
-
-                // Mount the view to the root
-                root.getChildren().add(views[i]);
             }
+
+            // Instantiate the group
+            group = new Group(views);
+
+            // Mount the group to the root
+            root.getChildren().add(group);
 
             // Close the stream
             stream.close();
@@ -59,27 +59,26 @@ public class Background extends GameObject {
         }
     }
 
-    public ImageView[] getViews() {
-        return views;
-    }
-
+    int throttle = 0;
     public void Update() {
         // Ensure views are not null
-        if (views == null) return;
+        if (group == null) return;
 
-        // Move each image up by 1 pixel
-        for (int i = 0; i < views.length; i++) {
-            if (views[i] != null) {
-                // Check the offset to see if the image needs to be moved back down by height to reset the animation
-                double y = views[i].getTranslateY();
-                if (offsets[i] >= height) {
-                    offsets[i] = 0;
-                    views[i].setTranslateY(y + height);
-                } else {
-                    offsets[i] += speed;
-                    views[i].setTranslateY(y - speed);
-                }
+        // Check if the throttle is exhausted
+        if (throttle >= 4) {
+            throttle = 0;
+
+            // Animate the background
+            group.setTranslateY(group.getTranslateY() - speed);
+            
+            // Check if the background has reached the end
+            if (group.getTranslateY() <= -height / 2) {
+                // Reset the background
+                group.setTranslateY(0);
             }
         }
+
+        // Increment the throttle
+        throttle++;
     }
 }
