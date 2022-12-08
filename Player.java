@@ -1,5 +1,4 @@
 import javafx.scene.Group;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
@@ -80,7 +79,7 @@ public class Player extends GameObject {
         busterFlare.mount(group, width * 0.75, height * 0.75, height * 0.23, height * 0.015);
 
         // Adjust the health text position
-        healthText.setTranslateX(width * 0.4);
+        healthText.setTranslateX(width * 0.35);
         healthText.setTranslateY(height * 0.63);
 
         // Mount the view to the root

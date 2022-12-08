@@ -4,7 +4,7 @@ import java.util.HashMap;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
-public class AudioManager {
+public class AudioManager implements Manager {
     HashMap<String, MediaPlayer> audioMap = new HashMap<String, MediaPlayer>();
 
     public void load(String name, String path) {
@@ -23,6 +23,14 @@ public class AudioManager {
             System.out.println("Error loading audio file: " + path);
             System.out.println(e);
         }
+    }
+
+    public boolean isLoaded(String name) {
+        return audioMap.get(name) != null;
+    }
+
+    public void unload(String name) {
+        audioMap.remove(name);
     }
 
     public void play(String name, boolean loop) {

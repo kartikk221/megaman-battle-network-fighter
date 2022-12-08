@@ -4,12 +4,12 @@ import java.util.HashMap;
 
 import javafx.scene.image.Image;
 
-public class SpriteManager {
+public class SpriteManager implements Manager {
     // Private variables
     HashMap<String, ArrayList<Image>> sprites = new HashMap<String, ArrayList<Image>>();
 
     // Loads sprites into memory from a given path concatenated with the index range
-    void load(String name, String path_name, String extension, int start, int end) {
+    public void load(String name, String path_name, String extension, int start, int end) {
         // Create a new array list to store the sprites
         ArrayList<Image> list = new ArrayList<Image>();
 
@@ -36,6 +36,22 @@ public class SpriteManager {
 
         // Add the sprite list to the sprites hash map
         sprites.put(name, list);
+    }
+
+    // Loads sprites into memory from a given path concatenated with the index range
+    public void load(String name, String path) {
+        // Call the overloaded method with defaults
+        load(name, path, ".png", 0, 0);
+    }
+
+    // Checks if a given sprite list is loaded
+    public boolean isLoaded(String name) {
+        return sprites.get(name) != null;
+    }
+
+    // Unloads a given sprite list from memory
+    public void unload(String name) {
+        sprites.remove(name);
     }
 
     // Returns the image at the given index of the given sprite
