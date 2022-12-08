@@ -1,25 +1,40 @@
 public class EnemyPlayer extends Player {
+    int min_reaction_frames = 30; // 500ms at 60fps
+    int max_reaction_frames = 90; // 1500ms at 60fps
+
     public EnemyPlayer() {
         // Call the super constructor with the path to the megaman sprites
         super("./assets/enemy");
+    }
 
-        // Randomly move the player between 0.1 - 1.5 seconds
-        new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep((long) (Math.random() * 1400 + 100));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+    int frames = 0;
+    int reaction_frames = 0;
 
-                // Randomly fire
-                setFiringBuster(Math.random() > 0.5);
+    // Called on each frame update which drives the enemy AI and underlying player
+    public void Update() {
+        // Generate a random reaction time
+        if (reaction_frames == 0)
+            reaction_frames = (int) (Math.random() * (max_reaction_frames - min_reaction_frames) + min_reaction_frames);
+
+        // If the reaction time has been reached, perform random actions
+        if (frames >= reaction_frames) {
+            // Randomly fire
+            setFiringBuster(Math.random() > 0.5);
                 
-                // Move randomly between -1 or 1 in both directions
-                boolean up = Math.random() > 0.5;
-                boolean left = Math.random() > 0.5;
-                move(up ? 1 : -1, left ? 1 : -1);
-            }
-        }).start();
+            // Move randomly between -1 or 1 in both directions
+            boolean up = Math.random() > 0.5;
+            boolean left = Math.random() > 0.5;
+            move(up ? 1 : -1, left ? 1 : -1);
+
+            // Reset the reaction time and frame counter
+            frames = 0;
+            reaction_frames = 0;
+        } else {
+            // Increment the frame counter
+            frames++;
+        }
+
+        // Tick the player
+        super.Update();
     }
 }

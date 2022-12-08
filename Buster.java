@@ -5,23 +5,27 @@ public class Buster extends AnimatedObject {
         super(path);
     }
 
+    // Loads the audio for the Buster
     protected void loadAudio(String path) {
         // Load the audio
         audio.load("fire", "./assets/sound/buster-fire.wav");
         audio.setVolume("fire", 0.1);
     }
 
+    // Loads the sprites for the Buster
     protected void loadSprites(String path) {
         // Load the sprites
         sprites.load("shoot", path + "/buster/buster_", ".png", 0, 3);
     }
 
+    // Initializes the Buster view
     protected void initialize(ImageView view, SpriteManager sprites, AudioManager audio) {
         // Set the initial image and hide the view
         view.setImage(sprites.getImage("shoot", 0));
         view.setVisible(false);
     }
 
+    // Called when the visibility of the Buster changes
     protected int onVisiblilityChange(boolean visible, int frame) {
         // Reset the frame on visibility hide
         if (!visible) {
@@ -31,6 +35,7 @@ public class Buster extends AnimatedObject {
         }
     }
 
+    // Animates the Buster during active frames along with playing the fire sound
     protected int UpdateFrame(int frame, ImageView view, SpriteManager sprites, AudioManager audio) {
         // Determine if end of animation is reached
         // Multiply and divide the frame by 3 to slow down the animation

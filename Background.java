@@ -58,6 +58,8 @@ public class Background extends GameObject {
     }
 
     int throttle = 0;
+
+    // Called on each frame update which gradually animates the background from bottom to top in an infinite loop
     public void Update() {
         // Ensure views are not null
         if (group == null) return;

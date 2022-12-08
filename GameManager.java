@@ -20,6 +20,7 @@ public class GameManager extends Application implements Thread.UncaughtException
         launch(args);
     }
     
+    // Called when JavaFX is ready to start the application
     public void start(Stage stage) {
         try {
             // Set the singleton instance
