@@ -62,16 +62,18 @@ public class GameManager extends Application implements Thread.UncaughtException
             battleGround = new BattleGround(root, "./assets/stage.png", width, height);
 
             // Calculate a relative size for the player
-            double player_size = width / 4;
+            double player_size = width / 3.9;
 
             // Instantiate the megaman player
             MegamanPlayer megaman = new MegamanPlayer(scene);
             megaman.mount(root, player_size, player_size, -width / 2);
+            megaman.updateHealth(200);
 
             // Instantiate the enemy player
             EnemyPlayer enemy = new EnemyPlayer();
             enemy.mount(root, player_size, player_size, 0);
             enemy.setDirection(true);
+            enemy.updateHealth(900);
 
             // Disable resizing and show the stage
             stage.setResizable(false);

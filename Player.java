@@ -1,6 +1,10 @@
 import javafx.scene.Group;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 public class Player extends GameObject {
     Group group;
@@ -9,6 +13,10 @@ public class Player extends GameObject {
     Flare busterFlare;
     PositionManager position;
     SpriteManager sprites = new SpriteManager();
+
+    Text healthText;
+    int health = 1000;
+    public static Font healthFont;
 
     public Player(String path) {
         // Instantiate the sprite manager and load the player sprites
@@ -20,9 +28,33 @@ public class Player extends GameObject {
         buster = new Buster(path);
         busterFlare = new Flare("./assets/effects");
 
-        // Instantiate the view and group
+        // Instantiate the view
         view = new ImageView(sprites.getImage("move", 0));
-        group = new Group(view);
+
+        // Instantiate the health font
+        if (healthFont == null)
+        healthFont = Font.loadFont(getClass().getResourceAsStream("./assets/fonts/BN6FontSmExt.ttf"), 100);
+
+
+        // Instantiate the health text
+        healthText = new Text(health + "");
+        healthText.setFont(healthFont);
+        healthText.setFill(Paint.valueOf("#f5fcfd"));
+        healthText.setStroke(javafx.scene.paint.Color.BLACK);
+        healthText.setStrokeWidth(4);
+        healthText.setOpacity(0.9);
+
+        // Instantiate the group
+        group = new Group(view, healthText);
+    }
+
+    // Updates the player health
+    public void updateHealth(int health) {
+        // Set the health value with a minimum of 0
+        this.health = Math.max(health, 0);
+
+        // Update the health text
+        healthText.setText(this.health + "");
     }
 
     public PositionManager getPositionManager() {
@@ -32,7 +64,7 @@ public class Player extends GameObject {
     // Mounts the player view to the given root
     public void mount(StackPane root, double width, double height, double offsetX) {
         // Instantiate the position manager
-        position = new PositionManager(width, offsetX - (height * 0.3), -height * 0.5);
+        position = new PositionManager(width, offsetX - (height * 0.33), -height * 0.5);
 
         // Set the view width and height
         view.setFitWidth(width);
@@ -47,13 +79,25 @@ public class Player extends GameObject {
         // Mount the buster flare to the root
         busterFlare.mount(group, width * 0.75, height * 0.75, height * 0.23, height * 0.015);
 
+        // Adjust the health text position
+        healthText.setTranslateX(width * 0.4);
+        healthText.setTranslateY(height * 0.63);
+
         // Mount the view to the root
         root.getChildren().add(group);
     }
 
     // Sets the player horizontal direction
     public void setDirection(boolean left) {
+        // Set the scale of the player based on the direction
         group.setScaleX(left ? -1 : 1);
+
+        // Inverse the text scaleX to prevent it from flipping
+        healthText.setScaleX(left ? -1 : 1);
+        if (left) {
+            // Adjust the health text horizontal position
+            healthText.setTranslateX(healthText.getTranslateX() * 0.9);
+        }
     }
 
     // Private booleans
@@ -69,6 +113,9 @@ public class Player extends GameObject {
             // Mark the player as moving
             movingFrame = 0;
             isPlayerMoving = true;
+
+            // Set the health text opacity to 0.5
+            healthText.setOpacity(0.4);
         } else {
             // Render the position instantly
             renderPosition();
@@ -118,12 +165,15 @@ public class Player extends GameObject {
             if (movingFrame >= 8) {
                 // Reset the moving flag
                 isPlayerMoving = false;
+                healthText.setOpacity(1);
             } else {
                 // Render the position change on the 4th frame
                 if (movingFrame == 4) renderPosition();
 
                 // Set the view image to the next move frame and increment the move frame
                 view.setImage(sprites.getImage("move", movingFrame));
+
+                // Increment the moving frame
                 movingFrame++;
             }
         } else if (isFiringBuster) {
