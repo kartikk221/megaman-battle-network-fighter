@@ -5,11 +5,11 @@ public class Flare extends AnimatedObject {
         super(path);
     }
 
-    protected void loadAudio(String path) {
+    protected void loadAudio(String path, AudioManager audio) {
         // No audio to load
     }
 
-    protected void loadSprites(String path) {
+    protected void loadSprites(String path, SpriteManager sprites) {
         // Load the sprites
         sprites.load("flare", path + "/flare/flare_", ".png", 0, 2);
     }

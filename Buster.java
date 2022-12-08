@@ -6,14 +6,14 @@ public class Buster extends AnimatedObject {
     }
 
     // Loads the audio for the Buster
-    protected void loadAudio(String path) {
+    protected void loadAudio(String path, AudioManager audio) {
         // Load the audio
         audio.load("fire", "./assets/sound/buster-fire.wav");
         audio.setVolume("fire", 0.1);
     }
 
     // Loads the sprites for the Buster
-    protected void loadSprites(String path) {
+    protected void loadSprites(String path, SpriteManager sprites) {
         // Load the sprites
         sprites.load("shoot", path + "/buster/buster_", ".png", 0, 3);
     }

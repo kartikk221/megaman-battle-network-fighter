@@ -27,6 +27,7 @@ public class MegamanPlayer extends Player {
         });
     }
 
+    // Handles key press state changes
     void onKeyChange(KeyCode code, boolean pressed) {
         // Check if the key code is "W" or "Up"
         if (code == KeyCode.W || code == KeyCode.UP) upPressed = pressed;

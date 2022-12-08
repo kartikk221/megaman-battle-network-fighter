@@ -12,20 +12,20 @@ public abstract class AnimatedObject implements Tickable {
         if (path.isEmpty()) throw new IllegalArgumentException("The path cannot be empty");
 
         // Load the audio
-        loadAudio(path);
+        loadAudio(path, audio);
 
         // Load the sprites
-        loadSprites(path);
+        loadSprites(path, sprites);
 
         // Initialize the view
         initialize(view, sprites, audio);
     }
 
     // Called when the AnimatedObject's audio must be loaded
-    protected abstract void loadAudio(String path);
+    protected abstract void loadAudio(String path, AudioManager audio);
 
     // Called when the AnimatedObject's sprites must be loaded
-    protected abstract void loadSprites(String path);
+    protected abstract void loadSprites(String path, SpriteManager sprites);
 
     // Called when the AnimatedObject is initialized
     protected abstract void initialize(ImageView view, SpriteManager sprites, AudioManager audio);
@@ -50,8 +50,9 @@ public abstract class AnimatedObject implements Tickable {
         root.getChildren().add(view);
     }
 
-    // Returns the visibility of the AnimatedObject
     boolean isVisible = false;
+
+    // Returns the visibility of the AnimatedObject
     public boolean isVisible() {
         return isVisible;
     }

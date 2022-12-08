@@ -56,6 +56,7 @@ public class Player extends GameObject {
         healthText.setText(this.health + "");
     }
 
+    // Returns the position manager instance
     public PositionManager getPositionManager() {
         return position;
     }
