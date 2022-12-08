@@ -1,5 +1,3 @@
-package src;
-
 public class EnemyPlayer extends Player {
     public EnemyPlayer() {
         // Call the super constructor with the path to the megaman sprites

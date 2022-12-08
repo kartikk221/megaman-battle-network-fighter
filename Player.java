@@ -1,5 +1,3 @@
-package src;
-
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -47,7 +45,7 @@ public class Player extends GameObject {
         buster.mount(group, width * 0.75, height * 0.75, height * 0.05, height * 0.125);
 
         // Mount the buster flare to the root
-        busterFlare.mount(group, width * 0.75, height * 0.75, height * 0.25, height * 0.015);
+        busterFlare.mount(group, width * 0.75, height * 0.75, height * 0.23, height * 0.015);
 
         // Mount the view to the root
         root.getChildren().add(group);
@@ -148,8 +146,8 @@ public class Player extends GameObject {
                 }
 
                 // Tick the buster and flare
-                if (buster.isVisible()) buster.TickUpdate();
-                if (busterFlare.isVisible()) busterFlare.TickUpdate();
+                if (buster.isVisible()) buster.Update();
+                if (busterFlare.isVisible()) busterFlare.Update();
 
                 // Increment the fire frame
                 busterFireFrame++;

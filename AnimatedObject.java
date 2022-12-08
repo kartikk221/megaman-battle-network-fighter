@@ -1,9 +1,7 @@
-package src;
-
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 
-public abstract class AnimatedObject {
+public abstract class AnimatedObject implements Tickable {
     int frame = 0;
     ImageView view = new ImageView();
     AudioManager audio = new AudioManager();
@@ -23,19 +21,19 @@ public abstract class AnimatedObject {
         initialize(view, sprites, audio);
     }
 
-    // Must be implemented by the child class
+    // Called when the AnimatedObject's audio must be loaded
     protected abstract void loadAudio(String path);
 
-    // Must be implemented by the child class
+    // Called when the AnimatedObject's sprites must be loaded
     protected abstract void loadSprites(String path);
 
-    // Must be implemented by the child class
+    // Called when the AnimatedObject is initialized
     protected abstract void initialize(ImageView view, SpriteManager sprites, AudioManager audio);
 
-    // Must be implemented by the child class
+    // Called when the visibility of the AnimatedObject changes
     protected abstract int onVisiblilityChange(boolean visible, int frame);
 
-    // Must be implemented by the child class
+    // Called on each frame update in which changes can be performed and new frames can be returned
     protected abstract int UpdateFrame(int frame, ImageView view, SpriteManager sprites, AudioManager audio);
 
     // Mounts the Buster view to the given root
@@ -52,11 +50,13 @@ public abstract class AnimatedObject {
         root.getChildren().add(view);
     }
 
+    // Returns the visibility of the AnimatedObject
     boolean isVisible = false;
     public boolean isVisible() {
         return isVisible;
     }
 
+    // Sets the visibility of the AnimatedObject
     public void setVisible(boolean visible) {
         // Ensure the visibility state has changed
         if (isVisible != visible) {
@@ -65,8 +65,8 @@ public abstract class AnimatedObject {
         }
     }
 
-    // Weapons must be ticked manually
-    public void TickUpdate() {
+    // This method is ticked manually by the parent class
+    public void Update() {
         // Update the frame
         frame = UpdateFrame(frame, view, sprites, audio);
     }

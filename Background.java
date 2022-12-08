@@ -1,5 +1,3 @@
-package src;
-
 import java.io.FileInputStream;
 
 import javafx.scene.Group;

@@ -1,10 +1,6 @@
-package src;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.HashMap;
 
-import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 

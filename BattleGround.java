@@ -1,7 +1,4 @@
-package src;
-
 import java.io.FileInputStream;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;

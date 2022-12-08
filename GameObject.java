@@ -1,16 +1,14 @@
-package src;
-
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public abstract class GameObject {
+public abstract class GameObject implements Tickable {
     static public Runnable ticker = null;
     final public static int frame_rate = 60;
     final public static ArrayList<GameObject> objects = new ArrayList<GameObject>();
     final public static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-    // Initializes the game object
+    // Begins ticking all game objects at the rate of <GameObject.frame_rate> frames per second
     public static boolean beginTicking() {
         // Only initialize once and return false if already initialized
         if (ticker != null) return false;
@@ -42,6 +40,6 @@ public abstract class GameObject {
         objects.add(this);
     }
 
-    // Called every frame must be overridden by all child classes
+    // Called automatically every frame at the rate of <GameObject.frame_rate> frames per second
     public abstract void Update();
 }
