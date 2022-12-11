@@ -44,15 +44,20 @@ public class Buster extends Weapon {
         // Determine if end of animation is reached by
         // Multiplying and divide the frame by 3 to throttle the animation
         if (frame >= 4 * throttle) {
-            // Reset the frame and play fire sound
+            // Reset the frame
             frame = 0;
-            audio.play("fire", false);
 
             // Attempt damage on the enemy and play hit sound if damage was dealt
             boolean hit = attemptDamage(false);
             if (hit) audio.play("hit", false);
         } else {
+            // Play the fire sound on the 2nd frame
+            if(frame == 2 * throttle) audio.play("fire", false);
+
+            // Display the frame sprite
             if (frame % throttle == 0) view.setImage(sprites.getImage("shoot", frame / throttle));
+            
+            // Increment the frame
             frame++;
         }
 

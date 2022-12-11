@@ -31,7 +31,8 @@ public abstract class Weapon extends AnimatedObject {
         // Calculate effectiveness and vulnerability points for the owner and target
         int effectiveness_damage = ownerPosition[0] * damage;
         int vulnerability_damage = effectiveness_damage > 0 ? targetPosition[0] * damage : 0;
-        int final_damage = damage > 10 ? Math.min(damage * 2, vulnerability_damage + effectiveness_damage) : Math.max(damage, vulnerability_damage + effectiveness_damage);
+        int combined_damage = effectiveness_damage + vulnerability_damage;
+        int final_damage = damage > 10 ? Math.min(damage * 2, combined_damage > damage ? combined_damage : damage) : Math.max(damage, combined_damage);
 
         // Check if the owner and target are in the same vertical position aka. horizontally facing each other
         if (ownerPosition[1] == targetPosition[1]) {

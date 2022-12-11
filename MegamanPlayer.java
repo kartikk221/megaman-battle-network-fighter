@@ -15,6 +15,9 @@ public class MegamanPlayer extends Player {
 
         // Set the buster damage to 1
         getBuster().setDamage(1);
+
+        // Set the cannon damage to 50 
+        getCannon().setDamage(50);
     }
 
     // Binds the key detectors to control the player

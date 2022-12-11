@@ -8,6 +8,9 @@ public class EnemyPlayer extends Player {
 
         // Set the buster damage to 2
         getBuster().setDamage(2);
+
+        // Set the cannon damage to 50
+        getCannon().setDamage(50);
     }
 
     int frames = 0;

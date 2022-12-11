@@ -63,10 +63,18 @@ public class Player extends GameObject implements Serializable {
         return buster;
     }
 
+    // Returns the cannon instance for the player
+    public Cannon getCannon() {
+        return cannon;
+    }
+
     // Sets the enemy for the player
     public void setEnemy(Player enemy) {
         // Set the targets for the buster
         buster.setTargets(this, enemy);
+
+        // Set the targets for the cannon
+        cannon.setTargets(this, enemy);
     }
 
     // Tracks the number of frames the player is invincible for
@@ -241,6 +249,9 @@ public class Player extends GameObject implements Serializable {
             // Reset the fire frame, set firing flag
             cannonFireFrame = 0;
             isFiringCannon = true;
+
+            // Hide the cannon if visible
+            if (cannon.isVisible()) cannon.setVisible(false);
         }
 
         // Return true to indicate the firing state was updated
