@@ -50,7 +50,7 @@ public abstract class AnimatedObject implements Tickable {
         root.getChildren().add(view);
     }
 
-    boolean isVisible = false;
+    boolean isVisible = true;
 
     // Returns the visibility of the AnimatedObject
     public boolean isVisible() {
@@ -61,8 +61,14 @@ public abstract class AnimatedObject implements Tickable {
     public void setVisible(boolean visible) {
         // Ensure the visibility state has changed
         if (isVisible != visible) {
+            // Update the visibility state
             isVisible = visible;
-            view.setVisible(visible);
+
+            // Extrapolate the frame
+            frame = onVisiblilityChange(visible, frame);
+
+            // Set the view visibility
+            view.setOpacity(visible ? 1 : 0);
         }
     }
 

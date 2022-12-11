@@ -23,6 +23,10 @@ public class EnemyPlayer extends Player {
         if (frames >= reaction_frames) {
             // Randomly fire
             setFiringBuster(Math.random() > 0.5);
+
+            // Randomly fire cannon
+            boolean fireCannon = Math.random() > 0.5;
+            if (fireCannon) setFiringCannon(fireCannon);
                 
             // Move randomly between -1 or 1 in both directions
             boolean up = Math.random() > 0.5;

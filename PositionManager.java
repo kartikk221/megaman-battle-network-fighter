@@ -36,7 +36,7 @@ public class PositionManager {
 
     // Returns the screen x translation
     double getTranslationX() {
-        return offsetX + ((3 - x) * (distance * 0.65));
+        return (inverseAbsolute ? offsetX * 5.6 : offsetX) + ((3 - x) * (distance * 0.65));
     }
 
     // Returns the screen y translation

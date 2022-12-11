@@ -6,7 +6,8 @@ public class MegamanPlayer extends Player {
     boolean downPressed = false;
     boolean leftPressed = false;
     boolean rightPressed = false;
-    boolean shootPressed = false;
+    boolean shootBusterPressed = false;
+    boolean shootCannonPressed = false;
 
     public MegamanPlayer(int health) {
         // Call the super constructor with the path to the megaman sprites
@@ -46,7 +47,10 @@ public class MegamanPlayer extends Player {
         if (code == KeyCode.D || code == KeyCode.RIGHT) rightPressed = pressed;
 
         // Check if the space bar was pressed
-        if (code == KeyCode.SPACE) shootPressed = pressed;
+        if (code == KeyCode.SPACE) shootBusterPressed = pressed;
+
+        // CHeck if the left control or right control key was pressed
+        if (code == KeyCode.CONTROL) shootCannonPressed = pressed;
     }
 
     // This method is called every frame
@@ -58,7 +62,11 @@ public class MegamanPlayer extends Player {
         if (rightPressed) move(-1, 0);
 
         // Update the firing state
-        setFiringBuster(shootPressed);
+        // We constantly update state because buster can be held down to fire constantly
+        setFiringBuster(shootBusterPressed);
+
+        // Update the cannon firing state only if pressing the cannon button
+        if (shootCannonPressed) setFiringCannon(shootCannonPressed);
 
         // Call the super Update() to tick the Player class
         super.Update();

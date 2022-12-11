@@ -3,14 +3,17 @@ import java.io.Serializable;
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 public class Player extends GameObject implements Serializable {
     Group group;
     ImageView view;
     Buster buster;
+    Cannon cannon;
     Flare busterFlare;
     PositionManager position;
     SpriteManager sprites = new SpriteManager();
@@ -32,6 +35,9 @@ public class Player extends GameObject implements Serializable {
         buster = new Buster(path);
         busterFlare = new Flare("./assets/effects");
 
+        // Instantiate the cannon weapon
+        cannon = new Cannon(path);
+
         // Instantiate the view
         view = new ImageView(sprites.getImage("move", 0));
 
@@ -39,12 +45,12 @@ public class Player extends GameObject implements Serializable {
         if (healthFont == null)
         healthFont = Font.loadFont(getClass().getResourceAsStream("./assets/fonts/BN6FontSmExt.ttf"), 100);
 
-
         // Instantiate the health text
         healthText = new Text(health + "");
         healthText.setFont(healthFont);
+        healthText.setStroke(Color.BLACK);
         healthText.setFill(Paint.valueOf("#f5fcfd"));
-        healthText.setStroke(javafx.scene.paint.Color.BLACK);
+        healthText.setTextAlignment(TextAlignment.CENTER);
         healthText.setStrokeWidth(4);
         healthText.setOpacity(0.9);
 
@@ -110,7 +116,7 @@ public class Player extends GameObject implements Serializable {
     // Mounts the player view to the given root
     public void mount(StackPane root, double width, double height, double offsetX) {
         // Instantiate the position manager
-        position = new PositionManager(width, offsetX - (height * 0.33), -height * 0.5);
+        position = new PositionManager(width, offsetX - (height * 0.1), -height * 0.6);
 
         // Set the view width and height
         view.setFitWidth(width);
@@ -122,11 +128,14 @@ public class Player extends GameObject implements Serializable {
         // Mount the buster weapon to the root
         buster.mount(group, width * 0.75, height * 0.75, height * 0.05, height * 0.125);
 
+        // Mount the cannon weapon to the root
+        cannon.mount(group, width, height, height * 0.45, -height * 0.31);
+
         // Mount the buster flare to the root
         busterFlare.mount(group, width * 0.75, height * 0.75, height * 0.23, height * 0.015);
 
         // Adjust the health text position
-        healthText.setTranslateX(width * 0.35);
+        healthText.setTranslateX(width * 0.4);
         healthText.setTranslateY(height * 0.63);
 
         // Mount the view to the root
@@ -137,6 +146,7 @@ public class Player extends GameObject implements Serializable {
     public void setDirection(boolean left) {
         // Set the inverse absolute flag of the position manager
         position.setInverseAbsolute(left);
+        renderPosition();
 
         // Set the scale of the player based on the direction
         group.setScaleX(left ? -1 : 1);
@@ -176,7 +186,7 @@ public class Player extends GameObject implements Serializable {
     boolean isPlayerMoving = false;
     public void move(int x, int y) {
         // Don't move if the player is already moving or firing
-        if (isPlayerMoving || isFiringBuster) return;
+        if (isPlayerMoving || isFiringBuster || isFiringCannon) return;
 
         // Retrieve current position and constrain the new position
         int[] position = this.position.getPosition();
@@ -187,11 +197,14 @@ public class Player extends GameObject implements Serializable {
         if (x != position[0] || y != position[1]) updatePosition(x, y, true);
     }
 
+    // Tracks buster firing state and animation
     int busterFireFrame = 0;
     boolean isFiringBuster = false;
-    public void setFiringBuster(boolean firing) {
+
+    // Attempts to update the firing state of the buster
+    public boolean setFiringBuster(boolean firing) {
         // Reject if the player is already moving or firing
-        if (isPlayerMoving || isFiringBuster == firing) return;
+        if (isPlayerMoving || isFiringCannon || isFiringBuster == firing) return false;
         
         // Determine if the player is firing or not
         if (isFiringBuster) {
@@ -205,6 +218,33 @@ public class Player extends GameObject implements Serializable {
             busterFireFrame = 0;
             isFiringBuster = true;
         }
+
+        // Return true to indicate the firing state was updated
+        return true;
+    }
+
+    // Tracks cannon firing state and animation
+    int cannonFireFrame = 0;
+    boolean isFiringCannon = false;
+
+    // Attempts to update the firing state of the cannon
+    public boolean setFiringCannon(boolean firing) {
+        // Reject if the player is already moving or firing
+        if (isPlayerMoving || isFiringBuster || isFiringCannon == firing) return false;
+        
+        // Determine if the player is firing or not
+        if (isFiringCannon) {
+            // Mark the player as not firing and update sprite to neutral
+            isFiringCannon = false;
+            view.setImage(sprites.getImage("move", 0));
+        } else {
+            // Reset the fire frame, set firing flag
+            cannonFireFrame = 0;
+            isFiringCannon = true;
+        }
+
+        // Return true to indicate the firing state was updated
+        return true;
     }
 
     public void Update() {
@@ -234,8 +274,8 @@ public class Player extends GameObject implements Serializable {
             } else {
                 // Increment the fire frame and update every 4 frames
                 if (busterFireFrame % throttle == 0) {
-                    // Show the buster and flare on the 3rd frame
-                    if (busterFireFrame == 3 * throttle) {
+                    // Show the buster and flare on the 4th frame
+                    if (busterFireFrame == 4 * throttle) {
                         buster.setVisible(true);
                         busterFlare.setVisible(true);
                     }
@@ -250,6 +290,28 @@ public class Player extends GameObject implements Serializable {
 
                 // Increment the fire frame
                 busterFireFrame++;
+            }
+        } else if (isFiringCannon) {
+            // Check if the firing frame is throttled
+            int throttle = 4;
+            if (cannonFireFrame % throttle == 0) {
+                // Show the cannon on the 4th frame
+                if (cannonFireFrame == 4 * throttle) cannon.setVisible(true);
+
+                // Update the player sprites up to the 4th frame
+                if (cannonFireFrame <= 4 * throttle) {
+                    // Update the player shoot sprite
+                    view.setImage(sprites.getImage("shoot", cannonFireFrame / throttle));
+                }
+            }
+
+            // Increment the cannon fire frames and Update the cannon
+            cannonFireFrame++;
+            if (cannon.isVisible()) {
+                cannon.Update();
+            } else if (cannonFireFrame > 4 * throttle) {
+                // Reset the firing state
+                setFiringCannon(false);
             }
         }
 

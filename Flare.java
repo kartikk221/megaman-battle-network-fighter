@@ -17,7 +17,7 @@ public class Flare extends AnimatedObject {
     protected void initialize(ImageView view, SpriteManager sprites, AudioManager audio) {
         // Set the initial image and hide the view
         view.setImage(sprites.getImage("flare", 0));
-        view.setVisible(false);
+        setVisible(false);
     }
 
     protected int onVisiblilityChange(boolean visible, int frame) {
