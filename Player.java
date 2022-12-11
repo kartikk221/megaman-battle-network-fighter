@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -5,7 +7,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-public class Player extends GameObject {
+public class Player extends GameObject implements Serializable {
     Group group;
     ImageView view;
     Buster buster;

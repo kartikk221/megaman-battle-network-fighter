@@ -1,5 +1,4 @@
 public interface Manager {
-    
     // Loads content into memory
     public void load(String name, String path);
 
