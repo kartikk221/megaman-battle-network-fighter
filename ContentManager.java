@@ -1,4 +1,4 @@
-public interface Manager {
+public interface ContentManager {
     // Loads content into memory
     public void load(String name, String path);
 

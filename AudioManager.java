@@ -4,7 +4,7 @@ import java.util.HashMap;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
-public class AudioManager implements Manager {
+public class AudioManager implements ContentManager {
     HashMap<String, MediaPlayer> audioMap = new HashMap<String, MediaPlayer>();
 
     // Loads an audio file into memory

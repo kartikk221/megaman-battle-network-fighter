@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import javafx.scene.image.Image;
 
-public class SpriteManager implements Manager {
+public class SpriteManager implements ContentManager {
     // Private variables
     HashMap<String, ArrayList<Image>> sprites = new HashMap<String, ArrayList<Image>>();
 
