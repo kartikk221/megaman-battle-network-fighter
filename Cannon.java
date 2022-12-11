@@ -46,11 +46,11 @@ public class Cannon extends Weapon {
             // Reset the frame
             return 0;
         } else {
-            // Play the fire sound on the 8th frame
-            if(frame == 8 * throttle) {
-                // Play the fire sound
-                audio.play("fire", false);
+            // Play the fire sound on the 4th frame
+            if(frame == 4 * throttle) audio.play("fire", false);
 
+            // Attempt damage on the 6th frame
+            if(frame == 6 * throttle) {
                 // Attempt damage on the enemy and play hit sound if damage was dealt
                 boolean hit = attemptDamage(true);
                 if (hit) audio.play("hit", false);

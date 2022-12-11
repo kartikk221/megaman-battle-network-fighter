@@ -133,8 +133,8 @@ public class Player extends GameObject implements Serializable {
             // Set the heavy damage frames to 0 to play damage animation
             heavyDamageFrames = 0;
 
-            // Make invincible for 180 frames aka. 1.5 seconds
-            makeInvincible(90);
+            // Make invincible for 120 frames aka. 2 seconds
+            makeInvincible(120);
         } else {
             // Make the player invincible for 5 frames
             makeInvincible(6);

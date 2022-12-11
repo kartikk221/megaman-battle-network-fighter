@@ -14,6 +14,7 @@ public class GameManager extends Application implements Thread.UncaughtException
     // Private variables
     Scene scene;
     Background background;
+    ControlsBox controlsBox;
     BattleGround battleGround;
     final StackPane root = new StackPane();
     public static AudioManager sharedAudio = new AudioManager();
@@ -59,9 +60,10 @@ public class GameManager extends Application implements Thread.UncaughtException
             scene = new Scene(root, width, height);
             stage.setScene(scene);
 
-            // Instantiate the background
+            // Instantiate the background and battle ground
             background = new Background(root, "./assets/background.png", width, height);
             battleGround = new BattleGround(root, "./assets/stage.png", width, height);
+            controlsBox = new ControlsBox(root, "./assets/controls.png", width / 3);
 
             // Calculate a relative size for the player
             double player_size = width / 3.9;

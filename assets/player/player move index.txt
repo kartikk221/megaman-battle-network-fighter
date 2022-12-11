@@ -1,8 +1,0 @@
-To keep track of the animation for each player move from animation names.
-
-move - animation_4 + animation_3
-still - animation_0
-damaged - animation_1
-shoot - animation 8 + 9
-buster -
-cannon - 
