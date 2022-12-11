@@ -4,6 +4,7 @@ public class PositionManager {
     double offsetX = 0;
     double offsetY = 0;
     double distance;
+    boolean inverseAbsolute = false;
     
     // Constructor
     public PositionManager(double distance, double offsetX, double offsetY) {
@@ -18,9 +19,19 @@ public class PositionManager {
         this.y = y;
     }
 
+    // Sets the inverse absolute flag
+    public void setInverseAbsolute(boolean inverseAbsolute) {
+        this.inverseAbsolute = inverseAbsolute;
+    }
+
     // Returns the [x, y] position in index form
     int[] getPosition() {
         return new int[]{ x, y };
+    }
+
+    // Returns the normalized left to right grid position
+    int[] getNormalizedPosition() {
+        return new int[]{ inverseAbsolute ? x : Math.abs(x - 2), y };
     }
 
     // Returns the screen x translation

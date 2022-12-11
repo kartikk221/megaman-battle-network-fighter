@@ -2,9 +2,12 @@ public class EnemyPlayer extends Player {
     int min_reaction_frames = 30; // 500ms at 60fps
     int max_reaction_frames = 90; // 1500ms at 60fps
 
-    public EnemyPlayer() {
+    public EnemyPlayer(int health) {
         // Call the super constructor with the path to the megaman sprites
-        super("./assets/enemy");
+        super("./assets/enemy", health);
+
+        // Set the buster damage to 2
+        getBuster().setDamage(2);
     }
 
     int frames = 0;

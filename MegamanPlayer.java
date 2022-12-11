@@ -2,18 +2,22 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 
 public class MegamanPlayer extends Player {
-    Scene scene;
     boolean upPressed = false;
     boolean downPressed = false;
     boolean leftPressed = false;
     boolean rightPressed = false;
     boolean shootPressed = false;
 
-    public MegamanPlayer(Scene scene) {
+    public MegamanPlayer(int health) {
         // Call the super constructor with the path to the megaman sprites
-        super("./assets/player");
-        this.scene = scene;
+        super("./assets/player", health);
 
+        // Set the buster damage to 1
+        getBuster().setDamage(1);
+    }
+
+    // Binds the key detectors to control the player
+    public void bindKeyDetectors(Scene scene) {
         // Bind a listener for key presses to allow for continuous movement
         scene.setOnKeyPressed(e -> {
             // Refresh the key press state

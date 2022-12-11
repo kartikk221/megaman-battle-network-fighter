@@ -1,6 +1,6 @@
 import javafx.scene.image.ImageView;
 
-public class Buster extends AnimatedObject {
+public class Buster extends Weapon {
     public Buster(String path) {
         super(path);
     }
@@ -9,7 +9,9 @@ public class Buster extends AnimatedObject {
     protected void loadAudio(String path, AudioManager audio) {
         // Load the audio
         audio.load("fire", "./assets/sound/buster-fire.wav");
+        audio.load("hit", "./assets/sound/buster-hit.wav");
         audio.setVolume("fire", 0.1);
+        audio.setVolume("hit", 0.08);
     }
 
     // Loads the sprites for the Buster
@@ -40,9 +42,13 @@ public class Buster extends AnimatedObject {
         // Determine if end of animation is reached
         // Multiply and divide the frame by 3 to slow down the animation
         if (frame >= 4 * 3) {
-            // Reset the frame and play the fire sound
+            // Reset the frame and play fire sound
             frame = 0;
             audio.play("fire", false);
+
+            // Attempt damage on the enemy and play hit sound if damage was dealt
+            boolean hit = attemptDamage(false);
+            if (hit) audio.play("hit", false);
         } else {
             if (frame % 3 == 0) view.setImage(sprites.getImage("shoot", frame / 3));
             frame++;

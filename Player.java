@@ -16,10 +16,13 @@ public class Player extends GameObject implements Serializable {
     SpriteManager sprites = new SpriteManager();
 
     Text healthText;
-    int health = 1000;
+    int health = 100;
     public static Font healthFont;
 
-    public Player(String path) {
+    public Player(String path, int health) {
+        // Set the health
+        this.health = health;
+
         // Instantiate the sprite manager and load the player sprites
         sprites.load("move", path + "/move/move_", ".png", 0, 7);
         sprites.load("damaged", path + "/damaged/damaged_", ".png", 0, 7);
@@ -49,13 +52,54 @@ public class Player extends GameObject implements Serializable {
         group = new Group(view, healthText);
     }
 
-    // Updates the player health
-    public void updateHealth(int health) {
-        // Set the health value with a minimum of 0
-        this.health = Math.max(health, 0);
+    // Returns the buster instance for the player
+    public Buster getBuster() {
+        return buster;
+    }
 
-        // Update the health text
-        healthText.setText(this.health + "");
+    // Sets the enemy for the player
+    public void setEnemy(Player enemy) {
+        // Set the targets for the buster
+        buster.setTargets(this, enemy);
+    }
+
+    // Tracks the number of frames the player is invincible for
+    int invincibilityFrames = 0;
+
+    // Makes the player invincible for the given number of frames
+    void makeInvincible(int frames) {
+        // Do not make the player invincible if they are already invincible
+        if (isInvicible()) return;
+
+        // Set the invincibility frames
+        invincibilityFrames = frames;
+
+        // Decrease the player's opacity to indicate invincibility
+        group.setOpacity(0.5);
+    }
+
+    // Returns whether this player is invincible
+    public boolean isInvicible() {
+        return invincibilityFrames > 0;
+    }
+
+    // Inflicts damage to the player based on the provided damage and heavy flag
+    public void inflictDamage(int damage, boolean heavy) {
+        // Decrement and update the health text
+        health = Math.max(0, health - damage);
+        healthText.setText(health + "");
+        healthText.setFill(Paint.valueOf("#ff845a"));
+
+        // Determine if the player is dead
+        if (health == 0) {
+            // TODO - When the player dies, do something
+            System.out.println("Some Player died");
+        } else if (heavy) {
+            // TODO - When the player is hit by a heavy attack, do somethingq
+        } else {
+            // Make the player invincible for 5 frames
+            makeInvincible(6);
+        }
     }
 
     // Returns the position manager instance
@@ -91,6 +135,9 @@ public class Player extends GameObject implements Serializable {
 
     // Sets the player horizontal direction
     public void setDirection(boolean left) {
+        // Set the inverse absolute flag of the position manager
+        position.setInverseAbsolute(left);
+
         // Set the scale of the player based on the direction
         group.setScaleX(left ? -1 : 1);
 
@@ -203,6 +250,17 @@ public class Player extends GameObject implements Serializable {
 
                 // Increment the fire frame
                 busterFireFrame++;
+            }
+        }
+
+        // Determine if the player is invincible
+        if (isInvicible()) {
+            // Decrement and Reset the opacity back to make the player vulnerable
+            invincibilityFrames--;
+            if (invincibilityFrames == 0) {
+                // Reset the opacity and health text color
+                healthText.setFill(Paint.valueOf("#f5fcfd"));
+                group.setOpacity(1);
             }
         }
     }

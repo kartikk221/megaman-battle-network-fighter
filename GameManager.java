@@ -67,15 +67,18 @@ public class GameManager extends Application implements Thread.UncaughtException
             double player_size = width / 3.9;
 
             // Instantiate the megaman player
-            MegamanPlayer megaman = new MegamanPlayer(scene);
+            MegamanPlayer megaman = new MegamanPlayer(200);
             megaman.mount(root, player_size, player_size, -width / 2);
-            megaman.updateHealth(200);
+            megaman.bindKeyDetectors(scene);
 
             // Instantiate the enemy player
-            EnemyPlayer enemy = new EnemyPlayer();
+            EnemyPlayer enemy = new EnemyPlayer(900);
             enemy.mount(root, player_size, player_size, 0);
             enemy.setDirection(true);
-            enemy.updateHealth(900);
+
+            // Set the enemies for each player
+            megaman.setEnemy(enemy);
+            enemy.setEnemy(megaman);
 
             // Disable resizing and show the stage
             stage.setResizable(false);
