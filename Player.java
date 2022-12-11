@@ -89,13 +89,31 @@ public class Player extends GameObject implements Serializable {
         invincibilityFrames = frames;
 
         // Decrease the player's opacity to indicate invincibility
-        group.setOpacity(0.5);
+        group.setOpacity(0.7);
     }
 
     // Returns whether this player is invincible
     public boolean isInvicible() {
         return invincibilityFrames > 0;
     }
+
+    // Cancels any pending animations / actions from the player
+    void cancelPending() {
+        // Cancel movement if the player is moving
+        if (isPlayerMoving) {
+            // Set the frame to the last one in the animation which effectively cancels the animation / action
+            movingFrame = 8;
+        }
+
+        // Cancel buster firing if the player is firing
+        if (isFiringBuster) setFiringBuster(false);
+
+        // Cancel cannon firing if the player is firing
+        if (isFiringCannon) setFiringCannon(false);
+    }
+
+    // Tracks damage frames for the heavy damage animation
+    int heavyDamageFrames = -1;
 
     // Inflicts damage to the player based on the provided damage and heavy flag
     public void inflictDamage(int damage, boolean heavy) {
@@ -109,7 +127,14 @@ public class Player extends GameObject implements Serializable {
             // TODO - When the player dies, do something
             System.out.println("Some Player died");
         } else if (heavy) {
-            // TODO - When the player is hit by a heavy attack, do somethingq
+            // Cancel pending actions
+            cancelPending();
+
+            // Set the heavy damage frames to 0 to play damage animation
+            heavyDamageFrames = 0;
+
+            // Make invincible for 180 frames aka. 1.5 seconds
+            makeInvincible(90);
         } else {
             // Make the player invincible for 5 frames
             makeInvincible(6);
@@ -192,9 +217,9 @@ public class Player extends GameObject implements Serializable {
     // Moves the player based on the slot index change values
     int movingFrame = 0;
     boolean isPlayerMoving = false;
-    public void move(int x, int y) {
-        // Don't move if the player is already moving or firing
-        if (isPlayerMoving || isFiringBuster || isFiringCannon) return;
+    public boolean move(int x, int y) {
+        // Don't move if the player is damaged, moving or firing a weapon
+        if (heavyDamageFrames >= 0 || isPlayerMoving || isFiringBuster || isFiringCannon) return false;
 
         // Retrieve current position and constrain the new position
         int[] position = this.position.getPosition();
@@ -202,7 +227,12 @@ public class Player extends GameObject implements Serializable {
         y = Math.max(0, Math.min(2, position[1] + y));
 
         // Update the position if there is a change
-        if (x != position[0] || y != position[1]) updatePosition(x, y, true);
+        if (x != position[0] || y != position[1]) {
+            updatePosition(x, y, true);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // Tracks buster firing state and animation
@@ -211,8 +241,8 @@ public class Player extends GameObject implements Serializable {
 
     // Attempts to update the firing state of the buster
     public boolean setFiringBuster(boolean firing) {
-        // Reject if the player is already moving or firing
-        if (isPlayerMoving || isFiringCannon || isFiringBuster == firing) return false;
+        // Reject if the player is damaged, moving or firing a weapon
+        if (heavyDamageFrames >= 0 || isPlayerMoving || isFiringCannon || isFiringBuster == firing) return false;
         
         // Determine if the player is firing or not
         if (isFiringBuster) {
@@ -237,21 +267,21 @@ public class Player extends GameObject implements Serializable {
 
     // Attempts to update the firing state of the cannon
     public boolean setFiringCannon(boolean firing) {
-        // Reject if the player is already moving or firing
-        if (isPlayerMoving || isFiringBuster || isFiringCannon == firing) return false;
+        // Reject if the player is damaged, moving or firing a weapon
+        if (heavyDamageFrames >= 0 || isPlayerMoving || isFiringBuster || isFiringCannon == firing) return false;
         
         // Determine if the player is firing or not
         if (isFiringCannon) {
             // Mark the player as not firing and update sprite to neutral
             isFiringCannon = false;
             view.setImage(sprites.getImage("move", 0));
+
+            // Hide the cannon if visible
+            if (cannon.isVisible()) cannon.setVisible(false);
         } else {
             // Reset the fire frame, set firing flag
             cannonFireFrame = 0;
             isFiringCannon = true;
-
-            // Hide the cannon if visible
-            if (cannon.isVisible()) cannon.setVisible(false);
         }
 
         // Return true to indicate the firing state was updated
@@ -259,6 +289,22 @@ public class Player extends GameObject implements Serializable {
     }
 
     public void Update() {
+        // Check if the player is damaging
+        if (heavyDamageFrames >= 0) {
+            // Play the heavy damage animation
+            int throttle = 6;
+            if (heavyDamageFrames / throttle <= 7) {
+                // Update the damage sprite until last frame
+                if (heavyDamageFrames % throttle == 0) view.setImage(sprites.getImage("damaged", heavyDamageFrames / throttle));
+            
+                // Increment the damage frame
+                heavyDamageFrames++;
+            } else {
+                // Reset the damage frames
+                heavyDamageFrames = -1;
+            }
+        }
+
         // Check if the player is moving
         if (isPlayerMoving) {
             // Check if the move frame is at the end

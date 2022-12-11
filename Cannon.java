@@ -40,18 +40,21 @@ public class Cannon extends Weapon {
         // Determine if end of animation is reached by
         // Multiplying and divide the frame by 3 to throttle the animation
         if (frame >= 10 * throttle) {
-            // Attempt damage on the enemy and play hit sound if damage was dealt
-            boolean hit = attemptDamage(true);
-            if (hit) audio.play("hit", false);
-
             // Reset the visibility to hide the cannon after firing
             setVisible(false);
 
             // Reset the frame
             return 0;
         } else {
-            // Play the fire sound on the 7th frame
-            if(frame == 7 * throttle) audio.play("fire", false);
+            // Play the fire sound on the 8th frame
+            if(frame == 8 * throttle) {
+                // Play the fire sound
+                audio.play("fire", false);
+
+                // Attempt damage on the enemy and play hit sound if damage was dealt
+                boolean hit = attemptDamage(true);
+                if (hit) audio.play("hit", false);
+            }
 
             // Display the frame sprite
             if (frame % throttle == 0) view.setImage(sprites.getImage("shoot", frame / throttle));
