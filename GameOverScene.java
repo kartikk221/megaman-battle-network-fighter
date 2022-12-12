@@ -84,7 +84,7 @@ public class GameOverScene extends Mountable {
     // Mounts the scene to the stage
     public void mount(Stage stage) {
         // Set the title of the stage
-        stage.setTitle("Main Menu - Megaman Fighter Game");
+        stage.setTitle("Game Over - Megaman Fighter Game");
 
         // Sets the scene to the stage
         stage.setScene(scene);

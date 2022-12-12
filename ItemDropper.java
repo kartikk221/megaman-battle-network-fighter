@@ -18,9 +18,9 @@ public class ItemDropper implements Tickable {
 
         // Load the item sound effects
         audio.load("drop", "./assets/sound/item-drop.wav");
-        audio.setVolume("drop", 0.1);
+        audio.setVolume("drop", MainMenuScene.settings.getVolume());
         audio.load("pickup", "./assets/sound/item-pickup.wav");
-        audio.setVolume("pickup", 0.1);
+        audio.setVolume("pickup", MainMenuScene.settings.getVolume());
     }
 
     // Sets the item to drop

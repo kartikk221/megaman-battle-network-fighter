@@ -12,8 +12,8 @@ public class Cannon extends Weapon {
         // Load the audio
         audio.load("fire", "./assets/sound/cannon-fire.wav");
         audio.load("hit", "./assets/sound/cannon-hit.wav");
-        audio.setVolume("fire", 0.1);
-        audio.setVolume("hit", 0.1);
+        audio.setVolume("fire", MainMenuScene.settings.getVolume());
+        audio.setVolume("hit", MainMenuScene.settings.getVolume());
     }
 
     // Loads the sprites for the Buster

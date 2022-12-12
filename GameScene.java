@@ -11,7 +11,7 @@ public class GameScene extends Mountable {
     StackPane container = new StackPane();
     public static AudioManager audio = new AudioManager();
 
-    public GameScene() {
+    public GameScene(String difficulty) {
         // Retrieve the screen dimensions
         double[] screenDimensions = SceneManager.getScreenDimensions();
         double width = screenDimensions[0];
@@ -40,13 +40,30 @@ public class GameScene extends Mountable {
         // Calculate a relative size for the player
         double player_size = width / 3.9;
 
+        // Set the player health and enemy health based on the difficulty
+        int player_health, enemy_health;
+        switch (difficulty) {
+            case "Experienced":
+                player_health = 350;
+                enemy_health = 1000;
+                break;
+            case "Impossible":
+                player_health = 400;
+                enemy_health = 1500;
+                break;
+            default:
+                player_health = 200;
+                enemy_health = 500;
+                break;
+        }
+
         // Instantiate the megaman player
-        MegamanPlayer megaman = new MegamanPlayer(200);
+        MegamanPlayer megaman = new MegamanPlayer(player_health);
         megaman.mount(container, player_size, player_size, -width / 2);
         megaman.bindKeyDetectors(scene);
 
         // Instantiate the enemy player
-        EnemyPlayer enemy = new EnemyPlayer(500);
+        EnemyPlayer enemy = new EnemyPlayer(enemy_health);
         enemy.mount(container, player_size, player_size, 0);
         enemy.setDirection(true);
 
@@ -56,7 +73,7 @@ public class GameScene extends Mountable {
 
         // Load the background music
         audio.load("background", "./assets/sound/background.wav");
-        audio.setVolume("background", 0.1);
+        audio.setVolume("background", MainMenuScene.settings.getVolume());
     }
 
     // Mounts the scene to the stage

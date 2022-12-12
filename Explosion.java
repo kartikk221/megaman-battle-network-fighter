@@ -10,7 +10,7 @@ public class Explosion extends AnimatedObject {
     // Loads the audio for the explosion
     protected void loadAudio(String path, AudioManager audio) {
         audio.load("explode", "./assets/sound/explosion.wav");
-        audio.setVolume("explode", 0.05);
+        audio.setVolume("explode", MainMenuScene.settings.getVolume() * 0.5);
     }
 
     // Loads the sprites for the explosion

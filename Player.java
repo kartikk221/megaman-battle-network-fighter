@@ -39,7 +39,7 @@ public abstract class Player extends GameObject implements Serializable {
 
         // Instantiate the audio manager and load the player audio
         audio.load("death", "./assets/sound/death.wav");
-        audio.setVolume("death", 0.1);
+        audio.setVolume("death", MainMenuScene.settings.getVolume());
 
         // Instantiate the buster weapon
         buster = new Buster(path, this);

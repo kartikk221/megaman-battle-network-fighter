@@ -18,7 +18,7 @@ public class MegamanPlayer extends Player {
 
         // Load the weapon not available sound
         audio.load("weapon-not-available", "./assets/sound/weapon-not-available.wav");
-        audio.setVolume("weapon-not-available", 0.2);
+        audio.setVolume("weapon-not-available", Math.min(1, MainMenuScene.settings.getVolume() * 2));
 
         // Set the buster damage to 1
         getBuster().setDamage(1);

@@ -12,8 +12,8 @@ public class Buster extends Weapon {
         // Load the audio
         audio.load("fire", "./assets/sound/buster-fire.wav");
         audio.load("hit", "./assets/sound/buster-hit.wav");
-        audio.setVolume("fire", 0.1);
-        audio.setVolume("hit", 0.08);
+        audio.setVolume("fire", MainMenuScene.settings.getVolume());
+        audio.setVolume("hit", MainMenuScene.settings.getVolume() * 0.8);
     }
 
     // Loads the sprites for the Buster
