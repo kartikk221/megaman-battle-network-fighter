@@ -1,31 +1,27 @@
 import javafx.scene.image.ImageView;
 
-public class Buster extends Weapon {
+public class Explosion extends AnimatedObject {
     int throttle = 3;
-
-    public Buster(String path, Player owner) {
-        super(path, owner);
+    boolean playAudio = false;
+    public Explosion() {
+        super("./assets/effects/explosion");
     }
 
-    // Loads the audio for the Buster
+    // Loads the audio for the explosion
     protected void loadAudio(String path, AudioManager audio) {
-        // Load the audio
-        audio.load("fire", "./assets/sound/buster-fire.wav");
-        audio.load("hit", "./assets/sound/buster-hit.wav");
-        audio.setVolume("fire", 0.1);
-        audio.setVolume("hit", 0.08);
+        audio.load("explode", "./assets/sound/explosion.wav");
+        audio.setVolume("explode", 0.05);
     }
 
-    // Loads the sprites for the Buster
+    // Loads the sprites for the explosion
     protected void loadSprites(String path, SpriteManager sprites) {
-        // Load the sprites
-        sprites.load("shoot", path + "/buster/buster_", ".png", 0, 3);
+        sprites.load("explosion", path + "/explosion_", ".png", 0, 5);
     }
 
-    // Initializes the Buster view
+    // Initializes the explosion
     protected void initialize(ImageView view, SpriteManager sprites, AudioManager audio) {
         // Set the initial image and hide the view
-        view.setImage(sprites.getImage("shoot", 0));
+        view.setImage(sprites.getImage("explosion", 0));
         setVisible(false);
     }
 
@@ -39,23 +35,24 @@ public class Buster extends Weapon {
         }
     }
 
-    // Animates the Buster during active frames along with playing the fire sound
+    // Updates the play audio flag
+    public void setPlayAudio(boolean playAudio) {
+        this.playAudio = playAudio;
+    }
+
+    // Animates the explosion
     protected int UpdateFrame(int frame, ImageView view, SpriteManager sprites, AudioManager audio) {
         // Determine if end of animation is reached by
         // Multiplying and divide the frame by 3 to throttle the animation
-        if (frame >= 4 * throttle) {
+        if (frame >= 6 * throttle) {
             // Reset the frame
             frame = 0;
 
-            // Attempt damage on the enemy and play hit sound if damage was dealt
-            boolean hit = attemptDamage(false);
-            if (hit) audio.play("hit", false);
+            // Play the explosion sound
+            if (playAudio) audio.play("explode", false);
         } else {
-            // Play the fire sound on the 2nd frame
-            if(frame == 2 * throttle) audio.play("fire", false);
-
             // Display the frame sprite
-            if (frame % throttle == 0) view.setImage(sprites.getImage("shoot", frame / throttle));
+            if (frame % throttle == 0) view.setImage(sprites.getImage("explosion", frame / throttle));
             
             // Increment the frame
             frame++;

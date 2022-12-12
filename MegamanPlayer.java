@@ -34,23 +34,17 @@ public class MegamanPlayer extends Player {
 
         // Instantiate the cannon dropper
         cannonDropper = new ItemDropper(root, this);
-        cannonDropper.setProperties(60 * 30, 50);
+        cannonDropper.setProperties(60 * 10, 50);
         cannonDropper.setItem("./assets/weapons/cannon_1.jpg", width * 0.15, height * 0.15, -width * 0.22, height * 0.1);
     }
 
     // Binds the key detectors to control the player
     public void bindKeyDetectors(Scene scene) {
         // Bind a listener for key presses to allow for continuous movement
-        scene.setOnKeyPressed(e -> {
-            // Refresh the key press state
-            onKeyChange(e.getCode(), true);
-        });
+        scene.setOnKeyPressed(e -> onKeyChange(e.getCode(), true));
 
         // Bind a listener for key up to allow for weapon fire stop
-        scene.setOnKeyReleased(e -> {
-            // Refresh the key press state
-            onKeyChange(e.getCode(), false);
-        });
+        scene.setOnKeyReleased(e -> onKeyChange(e.getCode(), false));
     }
 
     // Handles key press state changes
@@ -80,8 +74,26 @@ public class MegamanPlayer extends Player {
         }
     }
 
+    // Handle when the player dies
+    public void OnDeath() {
+        System.out.println("MegamanPlayer died!");
+    }
+
     // This method is called every frame
     public void Update() {
+        // Do not update if the player is dead or enemy is dead
+        Player enemy = getEnemy();
+        if (isDead() || (enemy != null && enemy.isDead())) {
+            // Cancel pending actions
+            cancelPending();
+
+            // Tick the explosions if dead
+            if (isDead()) TickExplosions();
+
+            // Halt execution
+            return;
+        }
+
         // Move the player based on the key presses
         if (upPressed) move(0, 1);
         if (leftPressed) move(1, 0);

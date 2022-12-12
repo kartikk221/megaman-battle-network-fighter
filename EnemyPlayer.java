@@ -9,8 +9,13 @@ public class EnemyPlayer extends Player {
         // Set the buster damage to 2
         getBuster().setDamage(2);
 
-        // Set the cannon damage to 50
-        getCannon().setDamage(50);
+        // Set the cannon damage to 30 (Less than the player)
+        getCannon().setDamage(30);
+    }
+
+    // Handle when the player dies
+    public void OnDeath() {
+        System.out.println("MegamanPlayer died!");
     }
 
     int frames = 0;
@@ -18,6 +23,19 @@ public class EnemyPlayer extends Player {
 
     // Called on each frame update which drives the enemy AI and underlying player
     public void Update() {
+        // Ensure the enemy and player are not dead
+        Player enemy = getEnemy();
+        if (enemy == null || enemy.isDead() || isDead()) {
+            // Cancel pending actions
+            cancelPending();
+
+            // Tick the explosions if dead
+            if (isDead()) TickExplosions();
+
+            // Halt execution
+            return;
+        };
+
         // Generate a random reaction time
         if (reaction_frames == 0)
             reaction_frames = (int) (Math.random() * (max_reaction_frames - min_reaction_frames) + min_reaction_frames);
@@ -37,8 +55,8 @@ public class EnemyPlayer extends Player {
             move(up ? 1 : -1, left ? 1 : -1);
 
             // Reset the reaction time and frame counter
-            frames = 0;
             reaction_frames = 0;
+            frames = 0;
         } else {
             // Increment the frame counter
             frames++;

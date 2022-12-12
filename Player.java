@@ -9,15 +9,18 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-public class Player extends GameObject implements Serializable {
+public abstract class Player extends GameObject implements Serializable {
     Group group;
+    Player enemy;
     ImageView item;
     ImageView view;
     Buster buster;
     Cannon cannon;
     Flare busterFlare;
     PositionManager position;
+    AudioManager audio = new AudioManager();
     SpriteManager sprites = new SpriteManager();
+    Explosion[] explosions = new Explosion[2];
 
     Text healthText;
     int health = 100;
@@ -34,12 +37,16 @@ public class Player extends GameObject implements Serializable {
         sprites.load("shoot", path + "/shoot/shoot_", ".png", 0, 11);
         sprites.load("cannon", "./assets/weapons/cannon_", ".jpg", 1, 1);
 
+        // Instantiate the audio manager and load the player audio
+        audio.load("death", "./assets/sound/death.wav");
+        audio.setVolume("death", 0.1);
+
         // Instantiate the buster weapon
-        buster = new Buster(path);
+        buster = new Buster(path, this);
         busterFlare = new Flare("./assets/effects");
 
         // Instantiate the cannon weapon
-        cannon = new Cannon(path);
+        cannon = new Cannon(path, this);
 
         // Instantiate the item view
         item = new ImageView(sprites.getImage("cannon", 0));
@@ -93,11 +100,13 @@ public class Player extends GameObject implements Serializable {
 
     // Sets the enemy for the player
     public void setEnemy(Player enemy) {
-        // Set the targets for the buster
-        buster.setTargets(this, enemy);
+        // Set the enemy
+        this.enemy = enemy;
+    }
 
-        // Set the targets for the cannon
-        cannon.setTargets(this, enemy);
+    // Returns the enemy for the player if it exists
+    public Player getEnemy() {
+        return enemy;
     }
 
     // Tracks the number of frames the player is invincible for
@@ -135,6 +144,14 @@ public class Player extends GameObject implements Serializable {
         if (isFiringCannon) setFiringCannon(false);
     }
 
+    // Returns whether the player is dead
+    public boolean isDead() {
+        return health == 0;
+    }
+
+    // Called when the player dies
+    public abstract void OnDeath();
+
     // Tracks damage frames for the heavy damage animation
     int heavyDamageFrames = -1;
 
@@ -147,8 +164,26 @@ public class Player extends GameObject implements Serializable {
 
         // Determine if the player is dead
         if (health == 0) {
-            // TODO - When the player dies, do something
-            System.out.println("Some Player died");
+            // Cancel pending actions
+            cancelPending();
+
+            // Permanently render the first damaged frame
+            view.setImage(sprites.getImage("damaged", 0));
+
+            // Hide the health text
+            healthText.setOpacity(0);
+
+            // Set the megaman opacity to 0.5 to indicate death
+            group.setOpacity(0.8);
+
+            // Play the death sound
+            audio.play("death", false);
+
+            // Display all the explosions
+            for (Explosion e: explosions) e.setVisible(true);
+
+            // Call the death event
+            OnDeath();
         } else if (heavy) {
             // Cancel pending actions
             cancelPending();
@@ -199,6 +234,18 @@ public class Player extends GameObject implements Serializable {
         // Adjust the health text position
         healthText.setTranslateX(width * 0.4);
         healthText.setTranslateY(height * 0.63);
+
+        // Instantiate and register the player's explosions
+        for (int i = 0; i < explosions.length; i++) {
+            // Instantiate the explosion
+            explosions[i] = new Explosion();
+
+            // Only play audio on the first explosion
+            if (i == 0) explosions[i].setPlayAudio(true);
+
+            // Mount the explosion to the player
+            explosions[i].mount(group, width * 0.3, height * 0.3, width * 0.4 - (i * (width * 0.2)), width * 0.25 - (i * (width * 0.3)));
+        }
 
         // Mount the view to the root
         root.getChildren().add(group);
@@ -317,6 +364,16 @@ public class Player extends GameObject implements Serializable {
         return true;
     }
 
+    // Ticks the explosion frames
+    public void TickExplosions() {
+        for (int i = 0; i < explosions.length; i++) {
+            if (explosions[i].isVisible()) {
+                explosions[i].Update();
+            }
+        }
+    }
+
+    // Handles player frame updates
     public void Update() {
         // Check if the player is damaging
         if (heavyDamageFrames >= 0) {
@@ -406,10 +463,15 @@ public class Player extends GameObject implements Serializable {
             // Decrement and Reset the opacity back to make the player vulnerable
             invincibilityFrames--;
             if (invincibilityFrames == 0) {
-                // Reset the opacity and health text color
-                healthText.setFill(Paint.valueOf("#f5fcfd"));
+                // Reset the health color if more than 100 health
+                if (health >= 100) healthText.setFill(Paint.valueOf("#f5fcfd"));
+
+                // Reset the opacity of the player and health text
                 group.setOpacity(1);
             }
         }
+
+        // Tick the visible explosions
+        TickExplosions();
     }
 }

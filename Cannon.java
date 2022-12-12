@@ -3,8 +3,8 @@ import javafx.scene.image.ImageView;
 public class Cannon extends Weapon {
     int throttle = 4;
 
-    public Cannon(String path) {
-        super(path);
+    public Cannon(String path, Player owner) {
+        super(path, owner);
     }
 
     // Loads the audio for the Buster

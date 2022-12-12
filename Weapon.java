@@ -1,17 +1,11 @@
 public abstract class Weapon extends AnimatedObject {
     Player owner;
-    Player target;
     int damage = 1;
 
     // Pass the path to the weapon sprites to the super constructor
-    public Weapon(String path) {
+    public Weapon(String path, Player owner) {
         super(path);
-    }
-
-    // Configures the owner of the weapon
-    public void setTargets(Player owner, Player target) {
         this.owner = owner;
-        this.target = target;
     }
 
     // Configures the damage of the weapon
@@ -22,6 +16,7 @@ public abstract class Weapon extends AnimatedObject {
     // Attempts to perform damage from the owner to the target
     public boolean attemptDamage(boolean heavy) {
         // Ensure the owner and target are not null
+        Player target = owner.getEnemy();
         if (owner == null || target == null) return false;
 
         // Retrieve the positions of the owner and target

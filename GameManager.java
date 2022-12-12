@@ -64,7 +64,7 @@ public class GameManager extends Application implements Thread.UncaughtException
             megaman.bindKeyDetectors(scene);
 
             // Instantiate the enemy player
-            EnemyPlayer enemy = new EnemyPlayer(900);
+            EnemyPlayer enemy = new EnemyPlayer(500);
             enemy.mount(root, player_size, player_size, 0);
             enemy.setDirection(true);
 
