@@ -8,9 +8,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class GameManager extends Application implements Thread.UncaughtExceptionHandler, Serializable {
-    // Singleton instance
-    public static GameManager Instance;
-
     // Private variables
     Scene scene;
     Background background;
@@ -26,13 +23,6 @@ public class GameManager extends Application implements Thread.UncaughtException
     // Called when JavaFX is ready to start the application
     public void start(Stage stage) {
         try {
-            // Set the singleton instance
-            Instance = this;
-            if (Instance != this) {
-                System.out.println("GameManager is a singleton class. Only one instance can exist at a time.");
-                System.exit(1);
-            }
-
             // Set the title of the stage
             stage.setTitle("Megaman Fighter Game");
 

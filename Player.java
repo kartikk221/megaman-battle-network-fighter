@@ -11,6 +11,7 @@ import javafx.scene.text.TextAlignment;
 
 public class Player extends GameObject implements Serializable {
     Group group;
+    ImageView item;
     ImageView view;
     Buster buster;
     Cannon cannon;
@@ -20,6 +21,7 @@ public class Player extends GameObject implements Serializable {
 
     Text healthText;
     int health = 100;
+    boolean hasItem = false;
     public static Font healthFont;
 
     public Player(String path, int health) {
@@ -30,6 +32,7 @@ public class Player extends GameObject implements Serializable {
         sprites.load("move", path + "/move/move_", ".png", 0, 7);
         sprites.load("damaged", path + "/damaged/damaged_", ".png", 0, 7);
         sprites.load("shoot", path + "/shoot/shoot_", ".png", 0, 11);
+        sprites.load("cannon", "./assets/weapons/cannon_", ".jpg", 1, 1);
 
         // Instantiate the buster weapon
         buster = new Buster(path);
@@ -38,7 +41,11 @@ public class Player extends GameObject implements Serializable {
         // Instantiate the cannon weapon
         cannon = new Cannon(path);
 
-        // Instantiate the view
+        // Instantiate the item view
+        item = new ImageView(sprites.getImage("cannon", 0));
+        setHasItem(false);
+
+        // Instantiate the player view
         view = new ImageView(sprites.getImage("move", 0));
 
         // Instantiate the health font
@@ -55,7 +62,12 @@ public class Player extends GameObject implements Serializable {
         healthText.setOpacity(0.9);
 
         // Instantiate the group
-        group = new Group(view, healthText);
+        group = new Group(view, item, healthText);
+    }
+
+    // Return the group for the player
+    public Group getGroup() {
+        return group;
     }
 
     // Returns the buster instance for the player
@@ -66,6 +78,17 @@ public class Player extends GameObject implements Serializable {
     // Returns the cannon instance for the player
     public Cannon getCannon() {
         return cannon;
+    }
+
+    // Returns whether the player has an item
+    public boolean hasItem() {
+        return hasItem;
+    }
+
+    // Sets whether the player has an item
+    public void setHasItem(boolean hasItem) {
+        this.hasItem = hasItem;
+        item.setOpacity(hasItem ? 1 : 0);
     }
 
     // Sets the enemy for the player
@@ -154,6 +177,12 @@ public class Player extends GameObject implements Serializable {
         // Set the view width and height
         view.setFitWidth(width);
         view.setFitHeight(height);
+
+        // Set the item width and height
+        item.setFitWidth(width * 0.15);
+        item.setFitHeight(height * 0.15);
+        item.setTranslateX(width * 0.5);
+        item.setTranslateY(-height * 0.175);
 
         // Update local player position to 1,1 (middle)
         updatePosition(1, 1, false);

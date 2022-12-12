@@ -25,22 +25,32 @@ public class PositionManager {
     }
 
     // Returns the [x, y] position in index form
-    int[] getPosition() {
+    public int[] getPosition() {
         return new int[]{ x, y };
     }
 
     // Returns the normalized left to right grid position
-    int[] getNormalizedPosition() {
+    public int[] getNormalizedPosition() {
         return new int[]{ inverseAbsolute ? x : Math.abs(x - 2), y };
     }
 
     // Returns the screen x translation
-    double getTranslationX() {
-        return (inverseAbsolute ? offsetX * 5.6 : offsetX) + ((3 - x) * (distance * 0.65));
+    public double getTranslationX(int value) {
+        return (inverseAbsolute ? offsetX * 5.6 : offsetX) + ((3 - value) * (distance * 0.65));
+    }
+
+    // Returns the screen x translation
+    public double getTranslationX() {
+        return getTranslationX(x);
     }
 
     // Returns the screen y translation
-    double getTranslationY() {
-        return offsetY + ((3 - y) * (distance * 0.4));
+    public double getTranslationY(int value) {
+        return offsetY + ((3 - value) * (distance * 0.4));
+    }
+
+    // Returns the screen y translation
+    public double getTranslationY() {
+        return getTranslationY(y);
     }
 }

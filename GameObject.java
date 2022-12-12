@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import javafx.application.Platform;
+
 public abstract class GameObject implements Tickable {
     static public Runnable ticker = null;
     final public static int frame_rate = 60;
@@ -16,15 +18,21 @@ public abstract class GameObject implements Tickable {
         // Define the ticker runnable
         ticker = new Runnable() {
             public void run() {
-                // Update all game objects
-                for (GameObject object : objects) {
-                    try {
-                        object.Update();
-                    } catch (Exception e) {
-                        System.out.println("Update() failed for " + object.getClass().getName());
-                        System.out.println(e);
+                // Run the update method for each object in Platform.runLater to ensure that the UI thread is used
+                // This is required to prevent JavaFX from throwing an exception
+                Platform.runLater(new Runnable() {
+                    public void run() {
+                        // Update all game objects
+                        for (GameObject object : objects) {
+                            try {
+                                object.Update();
+                            } catch (Exception e) {
+                                System.out.println("Update() failed for " + object.getClass().getName());
+                                System.out.println(e);
+                            }
+                        }
                     }
-                }
+                });
             }
         };
 
