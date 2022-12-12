@@ -76,7 +76,13 @@ public class MegamanPlayer extends Player {
 
     // Handle when the player dies
     public void OnDeath() {
-        System.out.println("MegamanPlayer died!");
+        // Display game over screen after 3 seconds
+        GameObject.scheduleTick(60 * 3, new Runnable() {
+            public void run() {
+                // Mount the game over screen
+                SceneManager.mountScreen(new GameOverScene("Game Over", "Better luck next time!"));
+            }
+        });
     }
 
     // This method is called every frame
