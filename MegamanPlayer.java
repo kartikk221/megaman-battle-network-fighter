@@ -32,9 +32,23 @@ public class MegamanPlayer extends Player {
         // Call the super method to mount this player
         super.mount(root, width, height, offsetX);
 
+        // Determine the cannon dropper cycle seconds based on difficulty
+        int cycle_seconds = 10;
+        int drop_chance_percent = 50;
+        String difficulty = MainMenuScene.settings.getDifficulty();
+        switch(difficulty) {
+            case "Experienced":
+                drop_chance_percent = 75;
+                break;
+            case "Impossible":
+                cycle_seconds = 5;
+                drop_chance_percent = 75;
+                break;
+        }
+
         // Instantiate the cannon dropper
         cannonDropper = new ItemDropper(root, this);
-        cannonDropper.setProperties(60 * 10, 50);
+        cannonDropper.setProperties(60 * cycle_seconds, drop_chance_percent);
         cannonDropper.setItem("./assets/weapons/cannon_1.jpg", width * 0.15, height * 0.15, -width * 0.22, height * 0.1);
     }
 

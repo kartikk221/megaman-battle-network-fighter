@@ -83,7 +83,7 @@ public class MainMenuScene extends Mountable {
         Button newGameButton = createButton("Start New Game");
         newGameButton.setOnAction(e -> {
             // Mount the game scene
-            SceneManager.mountScreen(new GameScene(difficultyComboBox.getValue()));
+            SceneManager.mountScreen(new GameScene());
         });
 
         // Create the container

@@ -11,7 +11,7 @@ public class GameScene extends Mountable {
     StackPane container = new StackPane();
     public static AudioManager audio = new AudioManager();
 
-    public GameScene(String difficulty) {
+    public GameScene() {
         // Retrieve the screen dimensions
         double[] screenDimensions = SceneManager.getScreenDimensions();
         double width = screenDimensions[0];
@@ -42,6 +42,7 @@ public class GameScene extends Mountable {
 
         // Set the player health and enemy health based on the difficulty
         int player_health, enemy_health;
+        String difficulty = MainMenuScene.settings.getDifficulty();
         switch (difficulty) {
             case "Experienced":
                 player_health = 350;
