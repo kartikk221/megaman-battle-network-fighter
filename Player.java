@@ -1,5 +1,3 @@
-import java.io.Serializable;
-
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -9,7 +7,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-public abstract class Player extends GameObject implements Serializable {
+public abstract class Player extends GameObject {
     Group group;
     Player enemy;
     ImageView item;

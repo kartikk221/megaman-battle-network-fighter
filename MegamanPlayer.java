@@ -16,7 +16,9 @@ public class MegamanPlayer extends Player {
         // Call the super constructor with the path to the megaman sprites
         super("./assets/player", health);
 
-        // Load the weapon not available sound
+        // Load the sounds
+        audio.load("low-hp", "./assets/sound/low-hp.wav");
+        audio.setVolume("low-hp", Math.min(1, MainMenuScene.settings.getVolume() * 2));
         audio.load("weapon-not-available", "./assets/sound/weapon-not-available.wav");
         audio.setVolume("weapon-not-available", Math.min(1, MainMenuScene.settings.getVolume() * 2));
 
@@ -88,6 +90,15 @@ public class MegamanPlayer extends Player {
         }
     }
 
+    int lowHealthFrames = 0;
+    boolean isLowHealth = false;
+
+    // Handles health change events
+    public void OnHealthChange(int health) {
+        // Consider less than 100 as low health
+        isLowHealth = health <= 100;
+    }
+
     // Handle when the player dies
     public void OnDeath() {
         // Display game over screen after 3 seconds
@@ -136,5 +147,17 @@ public class MegamanPlayer extends Player {
 
         // Call the super Update() to tick the Player class
         super.Update();
+
+        // Check if the player is low health
+        if (isLowHealth) {
+            // Increment the low health frames
+            lowHealthFrames++;
+
+            // Play the low health sound every 45 frames
+            if (lowHealthFrames % 45 == 0) {
+                lowHealthFrames = 0;
+                audio.play("low-hp", false);
+            }
+        }
     }
 }
