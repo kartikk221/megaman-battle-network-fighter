@@ -1,8 +1,9 @@
 public class EnemyPlayer extends Player {
+    int original_health;
+    int last_hundreds_lost = 0;
     int min_move_frames = 30; // 500ms at 60fps
     int max_move_frames = 90; // 1500ms at 60fps
-    int reaction_chance_percent = 50;
-    int buster_chance_percent = 60;
+    int buster_chance_percent = 80;
     int cannon_chance_percent = 20;
 
     public EnemyPlayer(int health) {
@@ -16,15 +17,47 @@ public class EnemyPlayer extends Player {
         getCannon().setDamage(30);
     }
 
+    // Handles health change events
+    public void OnHealthChange(int health) {
+        // Store the original health
+        if (original_health == 0) {
+            original_health = health;
+        } else {
+            // Increase the difficulty every 100 health lost
+            int num_of_hundred_lost = (original_health - health) / 100;
+            if (num_of_hundred_lost > last_hundreds_lost) {
+                // Increase the difficulty
+                increaseDifficulty();
+
+                // Update the last hundreds lost
+                last_hundreds_lost = num_of_hundred_lost;
+            }
+        }
+    }
+
     // Handle when the player dies
     public void OnDeath() {
         // Display game over screen after 3 seconds
         GameObject.scheduleTick(60 * 3, new Runnable() {
             public void run() {
                 // Mount the game over screen
-                SceneManager.mountScreen(new GameOverScene("Congratulations", "You Beat the Game In Hard Mode!"));
+                String difficulty = MainMenuScene.settings.getDifficulty();
+                SceneManager.mountScreen(new GameOverScene("Congratulations", "You Beat the Game In " + difficulty + " Mode!"));
             }
         });
+    }
+
+    // Increases the difficulty of the enemy player AI
+    public void increaseDifficulty() {
+        // Decrease the move frame range
+        min_move_frames = Math.max(15, min_move_frames - 5); // At minimum 250ms
+        max_move_frames = Math.max(45, max_move_frames - 5); // At minimum 750ms
+
+        // Increase the buster chance
+        buster_chance_percent = Math.min(100, buster_chance_percent + 5);
+
+        // Increase the cannon chance up to 40%
+        cannon_chance_percent = Math.min(40, cannon_chance_percent + 5);
     }
 
     int frames = 0;
@@ -49,39 +82,25 @@ public class EnemyPlayer extends Player {
         if (reaction_frames == 0)
             reaction_frames = (int) (Math.random() * (max_move_frames - min_move_frames) + min_move_frames);
 
-        // Determine if the enemy is in vision range of the player
-        int[] playerPosition = getPositionManager().getPosition();
-        int[] enemyPosition = enemy.getPositionManager().getPosition();
-        boolean enemyVisible = playerPosition[1] == enemyPosition[1]; // Same vertical space
-
-        // Only react every 60 frames and if the enemy is visible
-        if (frames % 30 == 0 && enemyVisible) {
-            // Determine if we should react this frame
-            boolean react = Math.random() * 100 <= reaction_chance_percent;
-            if (react) {
-                // Cancel any pending actions
-                cancelPending();
-
-                // Determine if we should fire cannon or buster
-                boolean fireCannon = Math.random() * 100 <= cannon_chance_percent;
-                boolean fireBuster = Math.random() * 100 <= buster_chance_percent;
-                if (fireCannon) {
-                    setFiringCannon(true);
-                } else if (fireBuster) {
-                    setFiringBuster(true);
-                }
-            }
-        }
-
         // If the reaction time has been reached, perform random actions
-        if (frames >= reaction_frames) {            
-            // Ensure enemy is not visible
-            if (!enemyVisible) {
-                // Move randomly between -1 or 1 in both directions
-                boolean up = Math.random() > 0.5;
-                boolean left = Math.random() > 0.5;
-                move(up ? 1 : -1, left ? 1 : -1);
-            }
+        if (frames >= reaction_frames) {
+            // Determine if enemy is in view
+            int[] playerPosition = getPositionManager().getPosition();
+            int[] enemyPosition = enemy.getPositionManager().getPosition();
+            boolean inView = playerPosition[1] == enemyPosition[1];
+
+            // Randomly fire cannon at any time
+            boolean fireCannon = Math.round(Math.random() * 100) <= cannon_chance_percent;
+            if (fireCannon) setFiringCannon(fireCannon);
+
+            // Randomly fire buster if in view
+            boolean fireBuster = inView && Math.round(Math.random() * 100) <= buster_chance_percent;
+            setFiringBuster(fireBuster);
+
+            // Move randomly between -1 or 1 in both directions
+            boolean up = Math.random() > 0.5;
+            boolean left = Math.random() > 0.5;
+            move(up ? 1 : -1, left ? 1 : -1);
 
             // Reset the reaction time and frame counter
             reaction_frames = 0;

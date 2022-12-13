@@ -86,7 +86,8 @@ public class GameScene extends Mountable {
         audio.play("background", true);
 
         // Set the title of the stage
-        stage.setTitle("Fight! - Megaman Fighter Game");
+        String difficulty = MainMenuScene.settings.getDifficulty();
+        stage.setTitle(difficulty + " Difficulty - Megaman Fighter Game");
 
         // Sets the scene to the stage
         stage.setScene(scene);

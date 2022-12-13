@@ -152,6 +152,14 @@ public abstract class Player extends GameObject implements Serializable {
     // Called when the player dies
     public abstract void OnDeath();
 
+    // Called when the player health changes
+    public void OnHealthChange(int health) {}
+
+    // Returns the player's health
+    public int getHealth() {
+        return health;
+    }
+
     // Tracks damage frames for the heavy damage animation
     int heavyDamageFrames = -1;
 
@@ -161,6 +169,9 @@ public abstract class Player extends GameObject implements Serializable {
         health = Math.max(0, health - damage);
         healthText.setText(health + "");
         healthText.setFill(Paint.valueOf("#ff845a"));
+
+        // Call the health change event
+        OnHealthChange(health);
 
         // Determine if the player is dead
         if (health == 0) {
