@@ -9,6 +9,5 @@
         "f:\\javafx-19-sdk\\lib\\javafx.swing.jar",
         "f:\\javafx-19-sdk\\lib\\javafx.web.jar",
         "f:\\javafx-19-sdk\\lib\\javafx-swt.jar"
-    ],
-    "javafx.libPath": "f:\\javafx-19-sdk\\lib"
+    ]
 }
